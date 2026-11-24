@@ -10,6 +10,7 @@ import 'package:localsend_app/pages/tabs/receive_tab.dart';
 import 'package:localsend_app/pages/tabs/send_tab.dart';
 import 'package:localsend_app/pages/tabs/settings_tab.dart';
 import 'package:localsend_app/provider/selection/selected_sending_files_provider.dart';
+import 'package:localsend_app/provider/tv_provider.dart';
 import 'package:localsend_app/util/native/cross_file_converters.dart';
 import 'package:localsend_app/widget/responsive_builder.dart';
 import 'package:refena_flutter/refena_flutter.dart';
@@ -56,9 +57,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with Refena {
   bool _dragAndDropIndicator = false;
 
+  /// TV: per-tab focus anchors. The [PageView] keeps neighbor pages mounted,
+  /// so the focus would otherwise stay on the invisible previous tab after a
+  /// tab switch and D-pad navigation would move within that hidden page.
+  final List<FocusNode> _tabFocusNodes = List.generate(HomeTab.values.length, (_) => FocusNode());
+  HomeTab? _lastTvTab;
+
   @override
   void initState() {
     super.initState();
+    // Do not steal the focus on app start: ReceiveTab manages its own autofocus.
+    _lastTvTab = widget.initialTab;
 
     ensureRef((ref) async {
       ref.redux(homePageControllerProvider).dispatch(ChangeTabAction(widget.initialTab));
@@ -67,9 +76,35 @@ class _HomePageState extends State<HomePage> with Refena {
   }
 
   @override
+  void dispose() {
+    for (final node in _tabFocusNodes) {
+      node.dispose();
+    }
+    super.dispose();
+  }
+
+  /// TV only: move the primary focus into the newly visible tab so that the
+  /// remote's D-pad navigates the visible page instead of a hidden one.
+  void _moveTvFocusIntoTab(HomeTab tab, BuildContext context) {
+    if (_lastTvTab == tab) {
+      return;
+    }
+    _lastTvTab = tab;
+    if (!context.ref.read(tvProvider)) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _tabFocusNodes[tab.index].requestFocus();
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     Translations.of(context); // rebuild on locale change
     final vm = context.watch(homePageControllerProvider);
+    _moveTvFocusIntoTab(vm.currentTab, context);
 
     return DropTarget(
       onDragEntered: (_) {
@@ -142,10 +177,17 @@ class _HomePageState extends State<HomePage> with Refena {
                         PageView(
                           controller: vm.controller,
                           physics: const NeverScrollableScrollPhysics(),
-                          children: const [
-                            ReceiveTab(),
-                            SendTab(),
-                            SettingsTab(),
+                          children: [
+                            for (final tab in HomeTab.values)
+                              Focus(
+                                focusNode: _tabFocusNodes[tab.index],
+                                includeSemantics: false,
+                                child: switch (tab) {
+                                  HomeTab.receive => const ReceiveTab(),
+                                  HomeTab.send => const SendTab(),
+                                  HomeTab.settings => const SettingsTab(),
+                                },
+                              ),
                           ],
                         ),
                         if (_dragAndDropIndicator)

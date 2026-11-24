@@ -50,6 +50,7 @@ import 'package:localsend_isolates/util/show_instance.dart';
 import 'package:localsend_isolates/util/transfer_notification.dart';
 import 'package:logging/logging.dart';
 import 'package:marionette_flutter/marionette_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:refena_flutter/addons.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 import 'package:routerino/routerino.dart';
@@ -217,6 +218,16 @@ Future<void> postInit(BuildContext context, Ref ref, bool appStart) async {
       // TV: pin the process so the receive server survives the app going to the
       // background (or being started at boot by BootReceiver).
       await startKeepAliveServiceAndroid();
+    }
+
+    // TV: progress and keep-alive notifications are the primary feedback while
+    // receiving in the background. A no-op below Android 13 and when already granted.
+    if (ref.read(tvProvider)) {
+      try {
+        await Permission.notification.request();
+      } catch (e) {
+        _logger.warning('Requesting notification permission failed', e);
+      }
     }
 
     // Android 17+ blocks multicast discovery and LAN connections until this permission is granted,
