@@ -9,6 +9,7 @@ import 'package:localsend_app/provider/animation_provider.dart';
 import 'package:localsend_app/provider/local_ip_provider.dart';
 import 'package:localsend_app/provider/network/server/server_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/provider/tv_provider.dart';
 import 'package:localsend_app/util/ip_helper.dart';
 import 'package:localsend_app/widget/animations/initial_fade_transition.dart';
 import 'package:localsend_app/widget/column_list_view.dart';
@@ -16,6 +17,7 @@ import 'package:localsend_app/widget/custom_icon_button.dart';
 import 'package:localsend_app/widget/local_send_logo.dart';
 import 'package:localsend_app/widget/responsive_list_view.dart';
 import 'package:localsend_app/widget/rotating_widget.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:localsend_isolates/util/sleep.dart';
 import 'package:refena_flutter/addons.dart';
 import 'package:refena_flutter/refena_flutter.dart';
@@ -56,6 +58,7 @@ class _ReceiveTabState extends State<ReceiveTab> {
     final alias = context.watch(settingsProvider.select((s) => s.alias));
     final serverState = context.watch(serverProvider);
     final localIps = context.watch(localIpProvider.select((s) => s.localIps));
+    final isTv = context.ref.read(tvProvider);
 
     return Stack(
       children: [
@@ -99,6 +102,16 @@ class _ReceiveTabState extends State<ReceiveTab> {
                             textAlign: TextAlign.center,
                           ),
                         ),
+                        if (isTv && serverState != null && localIps.isNotEmpty)
+                          Flexible(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 15),
+                                child: _TvReceiveQr(serverState: serverState, ip: localIps.first),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -130,6 +143,48 @@ class _ReceiveTabState extends State<ReceiveTab> {
           showHistoryButton: _showHistoryButton,
           toggleAdvanced: _toggleAdvanced,
         ),
+      ],
+    );
+  }
+}
+
+/// TV: the receive service URL + QR code, always visible so a phone can join
+/// the web send page without any interaction on the TV side.
+class _TvReceiveQr extends StatelessWidget {
+  final ServerState serverState;
+  final String ip;
+
+  const _TvReceiveQr({required this.serverState, required this.ip});
+
+  @override
+  Widget build(BuildContext context) {
+    final url = '${serverState.https ? 'https' : 'http'}://$ip:${serverState.port}';
+    final pin = serverState.web?.pin;
+    final urlWithPin = switch (pin) {
+      String() => '$url/?pin=${Uri.encodeQueryComponent(pin)}',
+      null => url,
+    };
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(t.receiveTab.qrHint, style: const TextStyle(fontSize: 18), textAlign: TextAlign.center),
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+          child: SizedBox(
+            width: 200,
+            height: 200,
+            child: PrettyQrView.data(
+              data: urlWithPin,
+              errorCorrectLevel: QrErrorCorrectLevel.Q,
+              decoration: PrettyQrDecoration(shape: PrettyQrSmoothSymbol(roundFactor: 0, color: Colors.black)),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(url, style: const TextStyle(fontSize: 20), textAlign: TextAlign.center),
       ],
     );
   }

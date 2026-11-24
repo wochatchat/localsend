@@ -7,6 +7,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.database.Cursor
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -568,8 +569,21 @@ class MainActivity : FlutterActivity() {
             .setDataAndType(uri, "application/vnd.android.package-archive")
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
 
+        // TVs often ship multiple APK handlers; launching the system package installer
+        // directly avoids the "open with" chooser dialog.
+        val installer = resolveSystemInstaller(intent)
+
         return try {
-            startActivity(intent)
+            if (installer == null) {
+                startActivity(intent)
+            } else {
+                startActivity(
+                    Intent(intent).setClassName(
+                        installer.activityInfo.packageName,
+                        installer.activityInfo.name
+                    )
+                )
+            }
             true
         } catch (e: ActivityNotFoundException) {
             // TV ROMs often ship without a package-installer UI reachable via ACTION_VIEW.
@@ -578,7 +592,26 @@ class MainActivity : FlutterActivity() {
             requestInstallPermission()
             false
         } catch (e: Exception) {
-            false
+            // Explicit launch failed for another reason; let the system resolver decide.
+            try {
+                startActivity(intent)
+                true
+            } catch (e2: Exception) {
+                requestInstallPermission()
+                false
+            }
+        }
+    }
+
+    /// Picks the system package installer among the activities handling the APK
+    /// view intent, or the single candidate if it is unambiguous.
+    private fun resolveSystemInstaller(intent: Intent): ResolveInfo? {
+        return try {
+            val candidates = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+            candidates.firstOrNull { it.activityInfo.packageName.contains("packageinstaller") }
+                ?: candidates.singleOrNull()
+        } catch (e: Exception) {
+            null
         }
     }
 

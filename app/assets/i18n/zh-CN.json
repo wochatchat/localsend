@@ -52,7 +52,8 @@
       "favorites": "收藏夹",
       "on": "@:general.on"
     },
-    "link": "通过链接接收"
+    "link": "通过链接接收",
+    "qrHint": "手机扫码，即可在浏览器打开发送页面"
   },
   "sendTab": {
     "title": "发送",
