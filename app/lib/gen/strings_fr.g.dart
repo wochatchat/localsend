@@ -1142,15 +1142,9 @@ class _Translations$progressPage$remainingTime$fr extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(
-    m,
-    other: '${m}min',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(m, other: '${m}min');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(
-    h,
-    other: '${h}h',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(h, other: '${h}h');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1484,9 +1478,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$fr extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'Les demandes de fichiers provenant de vos appareils favoris sont désormais automatiquement acceptées.',
-  ];
+  List<String> get content => ['Les demandes de fichiers provenant de vos appareils favoris sont désormais automatiquement acceptées.'];
 }
 
 // Path: dialogs.pin

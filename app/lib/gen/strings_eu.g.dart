@@ -1142,15 +1142,9 @@ class _Translations$progressPage$remainingTime$eu extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('eu'))(
-    m,
-    other: '${m}min',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('eu'))(m, other: '${m}min');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('eu'))(
-    h,
-    other: '${h}h',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('eu'))(h, other: '${h}h');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1484,9 +1478,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$eu extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'Fitxategi-eskaerak orain automatikoki onartzen dira zure gogokoen zerrendako gailuetatik.',
-  ];
+  List<String> get content => ['Fitxategi-eskaerak orain automatikoki onartzen dira zure gogokoen zerrendako gailuetatik.'];
 }
 
 // Path: dialogs.pin

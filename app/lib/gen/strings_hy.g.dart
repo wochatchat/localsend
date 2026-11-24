@@ -1224,17 +1224,9 @@ class _Translations$progressPage$remainingTime$hy extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hy'))(
-    m,
-    other: '${m}ր',
-    one: '${m}ր',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hy'))(m, other: '${m}ր', one: '${m}ր');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hy'))(
-    h,
-    other: '${h}ժ',
-    one: '${h}ժ',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hy'))(h, other: '${h}ժ', one: '${h}ժ');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1568,9 +1560,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$hy extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'Ֆայլերի հարցումները այժմ ընդունվում են ավտոմատ ձեր սիրվածների ցանկում գտնվող սարքերից։',
-  ];
+  List<String> get content => ['Ֆայլերի հարցումները այժմ ընդունվում են ավտոմատ ձեր սիրվածների ցանկում գտնվող սարքերից։'];
 }
 
 // Path: dialogs.pin

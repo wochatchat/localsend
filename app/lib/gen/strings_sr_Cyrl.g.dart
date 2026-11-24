@@ -394,11 +394,8 @@ class _Translations$receivePage$sr_Cyrl extends Translations$receivePage$sr {
 
   // Translations
   @override
-  String subTitle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sr'))(
-    n,
-    one: 'жели да вам пошаље фајл',
-    other: 'жели да вам пошаље ${n} фајлова',
-  );
+  String subTitle({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sr'))(n, one: 'жели да вам пошаље фајл', other: 'жели да вам пошаље ${n} фајлова');
   @override
   String get subTitleMessage => 'послао вам је поруку:';
   @override
@@ -1233,15 +1230,9 @@ class _Translations$progressPage$remainingTime$sr_Cyrl extends Translations$prog
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sr'))(
-    m,
-    other: '${m}мин',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sr'))(m, other: '${m}мин');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sr'))(
-    h,
-    other: '${h}ч',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sr'))(h, other: '${h}ч');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1574,9 +1565,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$sr_Cyrl extends Transla
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'Захтеви за фајлове се сада аутоматски прихватају са уређаја који су на вашој листи омиљених.',
-  ];
+  List<String> get content => ['Захтеви за фајлове се сада аутоматски прихватају са уређаја који су на вашој листи омиљених.'];
 }
 
 // Path: dialogs.pin

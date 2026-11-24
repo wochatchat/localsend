@@ -1226,15 +1226,9 @@ class _Translations$progressPage$remainingTime$ky extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ky'))(
-    m,
-    other: '${m}мүн',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ky'))(m, other: '${m}мүн');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ky'))(
-    h,
-    other: '${h}саат',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ky'))(h, other: '${h}саат');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1568,9 +1562,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$ky extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'Файл жөнөтүү сурамдары эми тандалмалар тизмесиндеги түзмөктөрдөн автоматтык түрдө кабыл алынат.',
-  ];
+  List<String> get content => ['Файл жөнөтүү сурамдары эми тандалмалар тизмесиндеги түзмөктөрдөн автоматтык түрдө кабыл алынат.'];
 }
 
 // Path: dialogs.pin

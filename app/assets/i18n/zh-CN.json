@@ -126,7 +126,11 @@
       "downloads": "(下载)",
       "saveToGallery": "保存到相册",
       "saveToHistory": "保存到历史记录",
-      "verifyChecksums": "接收文件时验证校验和"
+      "verifyChecksums": "接收文件时验证校验和",
+      "tvAutoAccept": "自动接收新请求（电视端）",
+      "keepAlive": "后台保活运行（电视端）",
+      "autoInstallApk": "收到 APK 后自动拉起安装",
+      "apkInstallFailed": "无法拉起安装器，请检查「安装未知应用」权限；文件已保存在下载目录。"
     },
     "send": {
       "title": "发送",

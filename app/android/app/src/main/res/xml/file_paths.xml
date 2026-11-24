@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Received files land in the app's public downloads / documents directories and in
+         the (legacy) external files dir; expose them read-only for the system installer. -->
+    <external-path
+        name="external_storage"
+        path="." />
+    <external-files-path
+        name="external_files"
+        path="." />
+    <files-path
+        name="internal_files"
+        path="." />
+    <cache-path
+        name="cache"
+        path="." />
+</paths>

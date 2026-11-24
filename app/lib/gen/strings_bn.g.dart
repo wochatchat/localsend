@@ -1225,15 +1225,9 @@ class _Translations$progressPage$remainingTime$bn extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bn'))(
-    m,
-    other: '${m}মি',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bn'))(m, other: '${m}মি');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bn'))(
-    h,
-    other: '${h}ঘ',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('bn'))(h, other: '${h}ঘ');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1565,9 +1559,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$bn extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'আপনার ফেভারিট তালিকায় থাকা ডিভাইস থেকে ফাইল অটোমেটিক রিসিভ করা হয়।',
-  ];
+  List<String> get content => ['আপনার ফেভারিট তালিকায় থাকা ডিভাইস থেকে ফাইল অটোমেটিক রিসিভ করা হয়।'];
 }
 
 // Path: dialogs.pin

@@ -1226,15 +1226,9 @@ class _Translations$progressPage$remainingTime$fa extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fa'))(
-    m,
-    other: '${m}د',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fa'))(m, other: '${m}د');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fa'))(
-    h,
-    other: '${h}س',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fa'))(h, other: '${h}س');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1568,9 +1562,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$fa extends Translations
   @override
   String get title => 'ذخیره سریع از علاقه‌مندی‌ها';
   @override
-  List<String> get content => [
-    'درخواست‌ها به صورت خودکار از دستگاه‌های موجود در فهرست موردعلاقه‌ها پذیرفته می‌شوند.',
-  ];
+  List<String> get content => ['درخواست‌ها به صورت خودکار از دستگاه‌های موجود در فهرست موردعلاقه‌ها پذیرفته می‌شوند.'];
 }
 
 // Path: dialogs.pin

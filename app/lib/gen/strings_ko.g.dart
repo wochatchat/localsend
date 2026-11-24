@@ -390,11 +390,8 @@ class _Translations$receivePage$ko extends Translations$receivePage$en {
 
   // Translations
   @override
-  String subTitle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(
-    n,
-    one: '에서 파일을 보내려고 합니다',
-    other: '에서 ${n}개의 파일을 보내려고 합니다',
-  );
+  String subTitle({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(n, one: '에서 파일을 보내려고 합니다', other: '에서 ${n}개의 파일을 보내려고 합니다');
   @override
   String get subTitleMessage => '에서 메시지를 보냈습니다:';
   @override
@@ -476,11 +473,8 @@ class _Translations$webSharePage$ko extends Translations$webSharePage$en {
   @override
   String get error => '서버를 시작하는 도중 오류가 발생했습니다.';
   @override
-  String openLink({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(
-    n,
-    one: '해당 링크를 브라우저에서 여세요:',
-    other: '해당 링크들 중 하나를 브라우저에서 여세요:',
-  );
+  String openLink({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(n, one: '해당 링크를 브라우저에서 여세요:', other: '해당 링크들 중 하나를 브라우저에서 여세요:');
   @override
   String get requests => '요청';
   @override
@@ -1133,15 +1127,9 @@ class _Translations$progressPage$remainingTime$ko extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(
-    m,
-    other: '${m}분',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(m, other: '${m}분');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(
-    h,
-    other: '${h}시간',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ko'))(h, other: '${h}시간');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1473,9 +1461,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$ko extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    '이제부터 즐겨찾기 목록에 있는 기기에서 보내는 파일 전송 요청이 자동으로 승인됩니다.',
-  ];
+  List<String> get content => ['이제부터 즐겨찾기 목록에 있는 기기에서 보내는 파일 전송 요청이 자동으로 승인됩니다.'];
 }
 
 // Path: dialogs.pin

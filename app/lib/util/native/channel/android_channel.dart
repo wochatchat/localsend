@@ -64,6 +64,39 @@ Future<bool> requestLocalNetworkPermissionAndroid() async {
   }
 }
 
+/// Starts the native keep-alive foreground service (Android TV).
+/// Keeps the process (and thus the receive server) alive while the app is in the background.
+Future<void> startKeepAliveServiceAndroid() async {
+  try {
+    await _methodChannel.invokeMethod('startKeepAliveService');
+  } catch (e) {
+    _logger.warning('Could not start keep-alive service', e);
+  }
+}
+
+Future<void> stopKeepAliveServiceAndroid() async {
+  try {
+    await _methodChannel.invokeMethod('stopKeepAliveService');
+  } catch (e) {
+    _logger.warning('Could not stop keep-alive service', e);
+  }
+}
+
+/// Opens the system installer for a received APK file.
+/// Returns false when no installer handled the request (e.g. TV without sideloading support
+/// or "install unknown apps" permission missing) so the caller can show a hint.
+Future<bool> installApkAndroid(String path) async {
+  try {
+    return await _methodChannel.invokeMethod<bool>('installApk', {
+          'path': path,
+        }) ??
+        false;
+  } catch (e) {
+    _logger.warning('Could not open APK installer', e);
+    return false;
+  }
+}
+
 Future<void> openContentUri({
   required String uri,
 }) async {

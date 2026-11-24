@@ -79,6 +79,9 @@ class SettingsService extends PureNotifier<SettingsState> {
     verifyChecksums: _persistence.getVerifyChecksums(),
     discoveryTimeout: _persistence.getDiscoveryTimeout(),
     advancedSettings: _persistence.getAdvancedSettingsEnabled(),
+    autoInstallApk: _persistence.getAutoInstallApk(),
+    keepAlive: _persistence.getKeepAlive(),
+    tvAutoAccept: _persistence.getTvAutoAccept(),
   );
 
   Future<void> setAlias(String alias) async {
@@ -106,6 +109,27 @@ class SettingsService extends PureNotifier<SettingsState> {
     await _persistence.setCustomColor(color);
     state = state.copyWith(
       customColor: color,
+    );
+  }
+
+  Future<void> setAutoInstallApk(bool v) async {
+    await _persistence.setAutoInstallApk(v);
+    state = state.copyWith(
+      autoInstallApk: v,
+    );
+  }
+
+  Future<void> setKeepAlive(bool v) async {
+    await _persistence.setKeepAlive(v);
+    state = state.copyWith(
+      keepAlive: v,
+    );
+  }
+
+  Future<void> setTvAutoAccept(bool v) async {
+    await _persistence.setTvAutoAccept(v);
+    state = state.copyWith(
+      tvAutoAccept: v,
     );
   }
 

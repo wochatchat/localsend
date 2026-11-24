@@ -10,10 +10,12 @@ import 'package:localsend_app/pages/settings/network_interfaces_page.dart';
 import 'package:localsend_app/pages/tabs/settings_tab_controller.dart';
 import 'package:localsend_app/provider/network/server/server_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/provider/tv_provider.dart';
 import 'package:localsend_app/provider/version_provider.dart';
 import 'package:localsend_app/util/alias_generator.dart';
 import 'package:localsend_app/util/device_type_ext.dart';
 import 'package:localsend_app/util/i18n.dart';
+import 'package:localsend_app/util/native/channel/android_channel.dart';
 import 'package:localsend_app/util/native/device_info_helper.dart';
 import 'package:localsend_app/util/native/macos_channel.dart';
 import 'package:localsend_app/util/native/pick_directory_path.dart';
@@ -288,6 +290,35 @@ class SettingsTab extends StatelessWidget {
                       if (ref.read(serverProvider) != null) {
                         await ref.notifier(serverProvider).restartServerFromSettings();
                       }
+                    },
+                  ),
+                if (ref.read(tvProvider)) ...[
+                  _BooleanEntry(
+                    label: t.settingsTab.receive.tvAutoAccept,
+                    value: vm.settings.tvAutoAccept,
+                    onChanged: (b) async {
+                      await ref.notifier(settingsProvider).setTvAutoAccept(b);
+                    },
+                  ),
+                  _BooleanEntry(
+                    label: t.settingsTab.receive.keepAlive,
+                    value: vm.settings.keepAlive,
+                    onChanged: (b) async {
+                      await ref.notifier(settingsProvider).setKeepAlive(b);
+                      if (b) {
+                        await startKeepAliveServiceAndroid();
+                      } else {
+                        await stopKeepAliveServiceAndroid();
+                      }
+                    },
+                  ),
+                ],
+                if (checkPlatform([TargetPlatform.android]))
+                  _BooleanEntry(
+                    label: t.settingsTab.receive.autoInstallApk,
+                    value: vm.settings.autoInstallApk,
+                    onChanged: (b) async {
+                      await ref.notifier(settingsProvider).setAutoInstallApk(b);
                     },
                   ),
               ],

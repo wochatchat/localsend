@@ -1141,15 +1141,9 @@ class _Translations$progressPage$remainingTime$ur extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ur'))(
-    m,
-    other: '${m}م',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ur'))(m, other: '${m}م');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ur'))(
-    h,
-    other: '${h}گھ',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ur'))(h, other: '${h}گھ');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1482,9 +1476,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$ur extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'آپ کی پسندیدہ فہرست میں شامل آلات کی فائل درخواستیں اب خودکار طور پر قبول کی جاتی ہیں۔',
-  ];
+  List<String> get content => ['آپ کی پسندیدہ فہرست میں شامل آلات کی فائل درخواستیں اب خودکار طور پر قبول کی جاتی ہیں۔'];
 }
 
 // Path: dialogs.pin

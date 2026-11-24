@@ -1224,15 +1224,9 @@ class _Translations$progressPage$remainingTime$sv extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sv'))(
-    m,
-    other: '${m}min',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sv'))(m, other: '${m}min');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sv'))(
-    h,
-    other: '${h}h',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('sv'))(h, other: '${h}h');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1565,9 +1559,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$sv extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'Filförfrågningar accepteras nu automatiskt från enheter i din favoritlista.',
-  ];
+  List<String> get content => ['Filförfrågningar accepteras nu automatiskt från enheter i din favoritlista.'];
 }
 
 // Path: dialogs.pin

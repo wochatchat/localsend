@@ -390,11 +390,7 @@ class Translations$receivePage$zh_TW extends Translations$receivePage$en {
 
   // Translations
   @override
-  String subTitle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(
-    n,
-    one: '要傳送一個檔案給您',
-    other: '要傳送 ${n} 個檔案給您',
-  );
+  String subTitle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(n, one: '要傳送一個檔案給您', other: '要傳送 ${n} 個檔案給您');
   @override
   String get subTitleMessage => '已傳送一則訊息給您：';
   @override
@@ -476,11 +472,8 @@ class Translations$webSharePage$zh_TW extends Translations$webSharePage$en {
   @override
   String get error => '啟動伺服器時發生錯誤。';
   @override
-  String openLink({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(
-    n,
-    one: '在瀏覽器開啟此連結：',
-    other: '在瀏覽器中開啟其中一個連結：',
-  );
+  String openLink({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(n, one: '在瀏覽器開啟此連結：', other: '在瀏覽器中開啟其中一個連結：');
   @override
   String get requests => '要求';
   @override
@@ -1138,15 +1131,9 @@ class Translations$progressPage$remainingTime$zh_TW extends Translations$progres
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(
-    m,
-    other: '${m}分鐘',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(m, other: '${m}分鐘');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(
-    h,
-    other: '${h}小時',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(h, other: '${h}小時');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1478,9 +1465,7 @@ class Translations$dialogs$quickSaveFromFavoritesNotice$zh_TW extends Translatio
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    '自動接受來自您最愛清單中裝置傳送的檔案。',
-  ];
+  List<String> get content => ['自動接受來自您最愛清單中裝置傳送的檔案。'];
 }
 
 // Path: dialogs.pin

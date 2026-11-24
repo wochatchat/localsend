@@ -1141,15 +1141,9 @@ class _Translations$progressPage$remainingTime$id extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('id'))(
-    m,
-    other: '${m}m',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('id'))(m, other: '${m}m');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('id'))(
-    h,
-    other: '${h}j',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('id'))(h, other: '${h}j');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1482,9 +1476,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$id extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'Permintaan berkas sekarang diterima secara otomatis dari perangkat di daftar favorit Anda.',
-  ];
+  List<String> get content => ['Permintaan berkas sekarang diterima secara otomatis dari perangkat di daftar favorit Anda.'];
 }
 
 // Path: dialogs.pin

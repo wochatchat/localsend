@@ -345,11 +345,8 @@ class _Translations$receivePage$en_IN extends Translations$receivePage$en {
 
   // Translations
   @override
-  String subTitle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
-    n,
-    one: 'wants to send you a file',
-    other: 'wants to send you ${n} files',
-  );
+  String subTitle({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'wants to send you a file', other: 'wants to send you ${n} files');
   @override
   String get subTitleMessage => 'sent you a message:';
   @override
@@ -1383,9 +1380,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$en_IN extends Translati
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'File requests are now accepted automatically from devices in your favourites list.',
-  ];
+  List<String> get content => ['File requests are now accepted automatically from devices in your favourites list.'];
 }
 
 // Path: dialogs.pin

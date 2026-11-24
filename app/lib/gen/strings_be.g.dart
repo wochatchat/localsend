@@ -391,11 +391,8 @@ class _Translations$receivePage$be extends Translations$receivePage$en {
 
   // Translations
   @override
-  String subTitle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('be'))(
-    n,
-    one: 'хоча адправіць вам файл',
-    other: 'хоча адправіць вам файлы (${n})',
-  );
+  String subTitle({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('be'))(n, one: 'хоча адправіць вам файл', other: 'хоча адправіць вам файлы (${n})');
   @override
   String get subTitleMessage => 'адправіў(-ла) вам паведамленне:';
   @override
@@ -1141,15 +1138,9 @@ class _Translations$progressPage$remainingTime$be extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('be'))(
-    m,
-    other: '${m} хв',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('be'))(m, other: '${m} хв');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('be'))(
-    h,
-    other: '${h} гадз',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('be'))(h, other: '${h} гадз');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1482,9 +1473,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$be extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'Запыты на адпраўку файлаў цяпер прымаюцца аўтаматычна ад прылад са спісу абраных.',
-  ];
+  List<String> get content => ['Запыты на адпраўку файлаў цяпер прымаюцца аўтаматычна ад прылад са спісу абраных.'];
 }
 
 // Path: dialogs.pin

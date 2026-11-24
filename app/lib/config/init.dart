@@ -213,6 +213,10 @@ Future<void> postInit(BuildContext context, Ref ref, bool appStart) async {
       } catch (e) {
         _logger.warning('Setting high refresh rate failed', e);
       }
+    } else if (ref.read(settingsProvider).keepAlive) {
+      // TV: pin the process so the receive server survives the app going to the
+      // background (or being started at boot by BootReceiver).
+      await startKeepAliveServiceAndroid();
     }
 
     // Android 17+ blocks multicast discovery and LAN connections until this permission is granted,

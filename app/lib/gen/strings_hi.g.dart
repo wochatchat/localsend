@@ -1225,15 +1225,9 @@ class _Translations$progressPage$remainingTime$hi extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hi'))(
-    m,
-    other: '${m}मि',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hi'))(m, other: '${m}मि');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hi'))(
-    h,
-    other: '${h}घं',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hi'))(h, other: '${h}घं');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1567,9 +1561,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$hi extends Translations
   @override
   String get title => '@ : सामान्य .जल्दी पसंदीदा से सहेजें';
   @override
-  List<String> get content => [
-    'अब आपके पसंदीदा सूची में शामिल डिवाइसों से फ़़ाइल अनुरोध स्वतः स्वीकार किए जाएंगे।',
-  ];
+  List<String> get content => ['अब आपके पसंदीदा सूची में शामिल डिवाइसों से फ़़ाइल अनुरोध स्वतः स्वीकार किए जाएंगे।'];
 }
 
 // Path: dialogs.pin

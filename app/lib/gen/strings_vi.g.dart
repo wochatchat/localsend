@@ -1140,15 +1140,9 @@ class _Translations$progressPage$remainingTime$vi extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('vi'))(
-    m,
-    other: '${m} phút',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('vi'))(m, other: '${m} phút');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('vi'))(
-    h,
-    other: '${h} giờ',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('vi'))(h, other: '${h} giờ');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1482,9 +1476,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$vi extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'Yêu cầu sẽ được chấp thuận tự động nếu thiết bị nằm trong danh sách yêu thích.',
-  ];
+  List<String> get content => ['Yêu cầu sẽ được chấp thuận tự động nếu thiết bị nằm trong danh sách yêu thích.'];
 }
 
 // Path: dialogs.pin

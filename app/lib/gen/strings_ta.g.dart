@@ -1226,15 +1226,9 @@ class _Translations$progressPage$remainingTime$ta extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ta'))(
-    m,
-    other: '${m}நி',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ta'))(m, other: '${m}நி');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ta'))(
-    h,
-    other: '${h}மணி',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ta'))(h, other: '${h}மணி');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1569,9 +1563,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$ta extends Translations
   @override
   String get title => '@: general.quick பிடித்தவைகளிலிருந்து சேமிக்கவும்';
   @override
-  List<String> get content => [
-    'உங்கள் பிடிக்க பட்டியலில் உள்ள சாதனங்களில் இருந்து கோப்பு கோரிக்கைகள் இப்போது தானாகவே ஏற்கப்படும்.',
-  ];
+  List<String> get content => ['உங்கள் பிடிக்க பட்டியலில் உள்ள சாதனங்களில் இருந்து கோப்பு கோரிக்கைகள் இப்போது தானாகவே ஏற்கப்படும்.'];
 }
 
 // Path: dialogs.pin

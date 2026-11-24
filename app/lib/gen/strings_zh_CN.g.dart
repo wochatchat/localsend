@@ -392,11 +392,8 @@ class Translations$receivePage$zh_CN extends Translations$receivePage$en {
 
   // Translations
   @override
-  String subTitle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(
-    n,
-    one: '想要发送给你一个文件',
-    other: '想要发送给你 ${n} 个文件',
-  );
+  String subTitle({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(n, one: '想要发送给你一个文件', other: '想要发送给你 ${n} 个文件');
   @override
   String get subTitleMessage => '发送给你了一条消息：';
   @override
@@ -478,11 +475,8 @@ class Translations$webSharePage$zh_CN extends Translations$webSharePage$en {
   @override
   String get error => '在启动服务器过程中发生了错误。';
   @override
-  String openLink({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(
-    n,
-    one: '在浏览器中打开链接：',
-    other: '在浏览器中打开其中一个链接：',
-  );
+  String openLink({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(n, one: '在浏览器中打开链接：', other: '在浏览器中打开其中一个链接：');
   @override
   String get requests => '请求';
   @override
@@ -998,6 +992,14 @@ class Translations$settingsTab$receive$zh_CN extends Translations$settingsTab$re
   String get saveToHistory => '保存到历史记录';
   @override
   String get verifyChecksums => '接收文件时验证校验和';
+  @override
+  String get tvAutoAccept => '自动接收新请求（电视端）';
+  @override
+  String get keepAlive => '后台保活运行（电视端）';
+  @override
+  String get autoInstallApk => '收到 APK 后自动拉起安装';
+  @override
+  String get apkInstallFailed => '无法拉起安装器，请检查「安装未知应用」权限；文件已保存在下载目录。';
 }
 
 // Path: settingsTab.send
@@ -1221,15 +1223,9 @@ class Translations$progressPage$remainingTime$zh_CN extends Translations$progres
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(
-    m,
-    other: '${m}分钟',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(m, other: '${m}分钟');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(
-    h,
-    other: '${h}小时',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(h, other: '${h}小时');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1561,9 +1557,7 @@ class Translations$dialogs$quickSaveFromFavoritesNotice$zh_CN extends Translatio
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    '当前会自动接受收藏夹中设备的文件请求。',
-  ];
+  List<String> get content => ['当前会自动接受收藏夹中设备的文件请求。'];
 }
 
 // Path: dialogs.pin

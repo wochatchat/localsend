@@ -1141,15 +1141,9 @@ class _Translations$progressPage$remainingTime$mn extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('mn'))(
-    m,
-    other: '${m}м',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('mn'))(m, other: '${m}м');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('mn'))(
-    h,
-    other: '${h}ц',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('mn'))(h, other: '${h}ц');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1482,9 +1476,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$mn extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'Дуртай жагсаалтад байгаа төхөөрөмжүүдийн файлын хүсэлтийг одоо автоматаар хүлээн авна.',
-  ];
+  List<String> get content => ['Дуртай жагсаалтад байгаа төхөөрөмжүүдийн файлын хүсэлтийг одоо автоматаар хүлээн авна.'];
 }
 
 // Path: dialogs.pin

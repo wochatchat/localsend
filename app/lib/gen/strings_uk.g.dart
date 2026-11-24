@@ -1141,15 +1141,9 @@ class _Translations$progressPage$remainingTime$uk extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(
-    m,
-    other: '${m}хв',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(m, other: '${m}хв');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(
-    h,
-    other: '${h}год',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('uk'))(h, other: '${h}год');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1484,9 +1478,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$uk extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'Запити на отримання файлів відтепер приймаються автоматично від пристроїв із вашого списку улюблених.',
-  ];
+  List<String> get content => ['Запити на отримання файлів відтепер приймаються автоматично від пристроїв із вашого списку улюблених.'];
 }
 
 // Path: dialogs.pin

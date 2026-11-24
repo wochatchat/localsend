@@ -40,6 +40,9 @@ class SettingsState with SettingsStateMappable {
   final bool verifyChecksums; // verify checksums when receiving files
   final int discoveryTimeout;
   final bool advancedSettings;
+  final bool autoInstallApk; // Android: pull up the installer after an APK finished receiving
+  final bool keepAlive; // Android: keep-alive foreground service + start on boot
+  final bool tvAutoAccept; // Android TV: accept incoming requests without confirmation
 
   const SettingsState({
     required this.showToken,
@@ -73,5 +76,8 @@ class SettingsState with SettingsStateMappable {
     required this.verifyChecksums,
     required this.discoveryTimeout,
     required this.advancedSettings,
+    required this.autoInstallApk,
+    required this.keepAlive,
+    required this.tvAutoAccept,
   });
 }

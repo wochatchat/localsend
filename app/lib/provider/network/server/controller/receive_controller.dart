@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/model/state/server/receive_session_state.dart';
 import 'package:localsend_app/model/state/server/receiving_file.dart';
 import 'package:localsend_app/pages/home_page.dart';
@@ -22,7 +23,9 @@ import 'package:localsend_app/provider/security_provider.dart';
 import 'package:localsend_app/provider/selection/selected_receiving_files_provider.dart';
 import 'package:localsend_app/provider/selection/selected_sending_files_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/provider/tv_provider.dart';
 import 'package:localsend_app/util/native/directories.dart';
+import 'package:localsend_app/util/native/channel/android_channel.dart';
 import 'package:localsend_app/util/native/platform_check.dart';
 import 'package:localsend_app/util/native/tray_helper.dart';
 import 'package:localsend_app/widget/dialogs/open_file_dialog.dart';
@@ -136,6 +139,11 @@ class ReceiveController {
     }
     if (server.getState().webUpload && settings.receiveViaLinkAutoAccept && server.getState().session?.isMessageRequest != true) {
       // The upload page (receive via link) is being served and requests should be accepted automatically.
+      quickSave = true;
+    }
+    if (server.ref.read(tvProvider) && settings.tvAutoAccept && server.getState().session?.isMessageRequest != true) {
+      // On the TV, incoming requests are accepted right away: the device stays reachable
+      // in the background and nobody is sitting in front of the confirmation dialog.
       quickSave = true;
     }
 
@@ -421,6 +429,9 @@ class ReceiveController {
           quickSave = true;
         }
       }
+      if (server.ref.read(tvProvider) && settings.tvAutoAccept && server.getState().session?.isMessageRequest != true) {
+        quickSave = true;
+      }
       if (quickSave) {
         // close the session **after** the response has been sent
         Future.delayed(Duration.zero, () {
@@ -432,17 +443,52 @@ class ReceiveController {
 
           // open the dialog to open file instantly
           if (filePath != null && filePath.isNotEmpty) {
-            // ignore: discarded_futures
-            OpenFileDialog.open(
-              Routerino.context, // ignore: use_build_context_synchronously
+            _handleFileAfterReceive(
               filePath: filePath,
               fileType: fileType,
-              openGallery: event.savedToGallery,
+              savedToGallery: event.savedToGallery,
+              autoInstallApk: settings.autoInstallApk,
             );
           }
         });
+      } else if (!hasError && filePath != null && filePath.isNotEmpty && fileType == FileType.apk && settings.autoInstallApk) {
+        // Non-quick-save session finished with an APK: pull up the installer while
+        // the result dialog is still open.
+        unawaited(_installApkWithFallback(filePath));
       }
       _logger.info('Received all files.');
+    }
+  }
+
+  /// Opens the file as usual, except for APKs which are pulled into the installer
+  /// directly (configurable). Shows a hint when the system cannot install.
+  void _handleFileAfterReceive({
+    required String filePath,
+    required FileType fileType,
+    required bool savedToGallery,
+    required bool autoInstallApk,
+  }) {
+    if (fileType == FileType.apk && autoInstallApk) {
+      unawaited(_installApkWithFallback(filePath));
+      return;
+    }
+
+    // ignore: use_build_context_synchronously, discarded_futures
+    OpenFileDialog.open(
+      Routerino.context,
+      filePath: filePath,
+      fileType: fileType,
+      openGallery: savedToGallery,
+    );
+  }
+
+  Future<void> _installApkWithFallback(String filePath) async {
+    final success = await installApkAndroid(filePath);
+    if (!success) {
+      // The system could not open an installer (TV ROM without sideload UI or
+      // "install unknown apps" not granted). Tell the user where the file is.
+      // ignore: use_build_context_synchronously, discarded_futures
+      Routerino.context.showSnackBar(t.settingsTab.receive.apkInstallFailed);
     }
   }
 

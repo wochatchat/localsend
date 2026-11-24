@@ -391,11 +391,8 @@ class _Translations$receivePage$he extends Translations$receivePage$en {
 
   // Translations
   @override
-  String subTitle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(
-    n,
-    one: 'רוצה לשלוח לך קובץ',
-    other: 'רוצה לשלוח לך ${n} קבצים',
-  );
+  String subTitle({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(n, one: 'רוצה לשלוח לך קובץ', other: 'רוצה לשלוח לך ${n} קבצים');
   @override
   String get subTitleMessage => 'שלח לך הודעה:';
   @override
@@ -477,11 +474,8 @@ class _Translations$webSharePage$he extends Translations$webSharePage$en {
   @override
   String get error => 'אירעה שגיאה בזמן הפעלת השרת.';
   @override
-  String openLink({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(
-    n,
-    one: 'פתח את הקישור בדפדפן:',
-    other: 'פתח את אחד מהקישורים האלו בדפדפן:',
-  );
+  String openLink({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(n, one: 'פתח את הקישור בדפדפן:', other: 'פתח את אחד מהקישורים האלו בדפדפן:');
   @override
   String get requests => 'בקשות';
   @override
@@ -1138,18 +1132,10 @@ class _Translations$progressPage$remainingTime$he extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(
-    m,
-    other: 'ו־${m} דקות',
-    one: 'ודקה',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(m, other: 'ו־${m} דקות', one: 'ודקה');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(
-    h,
-    other: '${h} שעות',
-    one: 'שעה',
-    two: 'שעתיים',
-  );
+  String hoursUnit({required num h}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('he'))(h, other: '${h} שעות', one: 'שעה', two: 'שעתיים');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1481,9 +1467,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$he extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'כעת בקשות לקבצים ייתקבלו אוטומטית ממכשירים ברשימת המועדפים שלך.',
-  ];
+  List<String> get content => ['כעת בקשות לקבצים ייתקבלו אוטומטית ממכשירים ברשימת המועדפים שלך.'];
 }
 
 // Path: dialogs.pin

@@ -94,6 +94,9 @@ const _shareViaLinkAutoAccept = 'ls_share_via_link_auto_accept';
 const _receiveViaLinkAutoAccept = 'ls_receive_via_link_auto_accept';
 const _createChecksums = 'ls_create_checksums';
 const _verifyChecksums = 'ls_verify_checksums';
+const _lsKeepAlive = 'ls_keep_alive';
+const _lsAutoInstallApk = 'ls_auto_install_apk';
+const _lsTvAutoAccept = 'ls_tv_auto_accept';
 const _advancedSettingsKey = 'ls_advanced_settings';
 const _whatsNewKey = 'ls_whats_new';
 
@@ -446,6 +449,30 @@ class PersistenceService {
 
   Future<void> setSaveToHistory(bool saveToHistory) async {
     await _prefs.setBool(_saveToHistory, saveToHistory);
+  }
+
+  bool getAutoInstallApk() {
+    return _prefs.getBool(_lsAutoInstallApk) ?? true;
+  }
+
+  Future<void> setAutoInstallApk(bool v) async {
+    await _prefs.setBool(_lsAutoInstallApk, v);
+  }
+
+  bool getKeepAlive() {
+    return _prefs.getBool(_lsKeepAlive) ?? true;
+  }
+
+  Future<void> setKeepAlive(bool v) async {
+    await _prefs.setBool(_lsKeepAlive, v);
+  }
+
+  bool getTvAutoAccept() {
+    return _prefs.getBool(_lsTvAutoAccept) ?? true;
+  }
+
+  Future<void> setTvAutoAccept(bool v) async {
+    await _prefs.setBool(_lsTvAutoAccept, v);
   }
 
   bool getAdvancedSettingsEnabled() {

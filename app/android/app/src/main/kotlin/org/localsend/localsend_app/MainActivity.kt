@@ -2,6 +2,7 @@ package org.localsend.localsend_app
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
@@ -30,6 +31,7 @@ private const val REQUEST_CODE_PICK_DIRECTORY = 1
 private const val REQUEST_CODE_PICK_DIRECTORY_PATH = 2
 private const val REQUEST_CODE_PICK_FILE = 3
 private const val REQUEST_CODE_LOCAL_NETWORK = 4
+private const val REQUEST_CODE_INSTALL_UNKNOWN_APPS = 5
 
 // Not available as a constant in compileSdk 36.
 private const val PERMISSION_ACCESS_LOCAL_NETWORK = "android.permission.ACCESS_LOCAL_NETWORK"
@@ -53,6 +55,19 @@ class MainActivity : FlutterActivity() {
             return
         }
         super.onNewIntent(intent)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // In the foreground the receive server is already alive with the activity;
+        // drop the extra keep-alive notification while the user looks at the app.
+        KeepAliveService.stop(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Background: pin the process so the LAN server keeps answering (TV use case).
+        KeepAliveService.maybeStart(this)
     }
 
     private fun onShareIntentReady() {
@@ -138,6 +153,25 @@ class MainActivity : FlutterActivity() {
                         pendingPermissionResult = result
                         requestPermissions(arrayOf(PERMISSION_ACCESS_LOCAL_NETWORK), REQUEST_CODE_LOCAL_NETWORK)
                     }
+                }
+
+                "startKeepAliveService" -> {
+                    KeepAliveService.start(applicationContext)
+                    result.success(null)
+                }
+
+                "stopKeepAliveService" -> {
+                    KeepAliveService.stop(applicationContext)
+                    result.success(null)
+                }
+
+                "installApk" -> {
+                    val path = call.argument<String>("path")
+                    if (path.isNullOrBlank() || !File(path).isAbsolute || !File(path).exists()) {
+                        result.error("INVALID_ARGUMENT", "Expected an existing absolute filesystem path", null)
+                        return@setMethodCallHandler
+                    }
+                    result.success(installApk(path))
                 }
 
                 else -> result.notImplemented()
@@ -513,6 +547,51 @@ class MainActivity : FlutterActivity() {
         intent.action = Intent.ACTION_VIEW
         intent.type = "image/*"
         startActivity(intent)
+    }
+
+    /// Opens the system package installer for a received APK.
+    /// Returns false when no installer is reachable (ActivityNotFoundException) or the
+    /// install-permission grant flow was started instead, so Dart can show a hint.
+    private fun installApk(path: String): Boolean {
+        val file = File(path)
+        val uri: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            androidx.core.content.FileProvider.getUriForFile(
+                this,
+                applicationContext.packageName + ".fileprovider",
+                file
+            )
+        } else {
+            Uri.fromFile(file)
+        }
+
+        val intent = Intent(Intent.ACTION_VIEW)
+            .setDataAndType(uri, "application/vnd.android.package-archive")
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+
+        return try {
+            startActivity(intent)
+            true
+        } catch (e: ActivityNotFoundException) {
+            // TV ROMs often ship without a package-installer UI reachable via ACTION_VIEW.
+            // Ask the user to allow "install unknown apps" for this app, which usually
+            // registers a handler; report false so Dart can show a hint either way.
+            requestInstallPermission()
+            false
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun requestInstallPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !packageManager.canRequestPackageInstalls()) {
+            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName"))
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            try {
+                startActivityForResult(intent, REQUEST_CODE_INSTALL_UNKNOWN_APPS)
+            } catch (e: Exception) {
+                // Some TV ROMs have no settings page for this; nothing else we can do here.
+            }
+        }
     }
 }
 

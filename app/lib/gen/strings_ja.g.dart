@@ -390,11 +390,8 @@ class _Translations$receivePage$ja extends Translations$receivePage$en {
 
   // Translations
   @override
-  String subTitle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(
-    n,
-    one: 'がファイルを送信しようとしています。',
-    other: 'が ${n} 件のファイルを送信しようとしています。',
-  );
+  String subTitle({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(n, one: 'がファイルを送信しようとしています。', other: 'が ${n} 件のファイルを送信しようとしています。');
   @override
   String get subTitleMessage => 'がメッセージを送信しました:';
   @override
@@ -476,11 +473,8 @@ class _Translations$webSharePage$ja extends Translations$webSharePage$en {
   @override
   String get error => 'サーバーの起動中にエラーが発生しました。';
   @override
-  String openLink({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(
-    n,
-    one: 'このリンクをブラウザーで開いてください:',
-    other: 'これらのリンクのいずれかをブラウザーで開いてください:',
-  );
+  String openLink({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(n, one: 'このリンクをブラウザーで開いてください:', other: 'これらのリンクのいずれかをブラウザーで開いてください:');
   @override
   String get requests => 'リクエスト';
   @override
@@ -1133,15 +1127,9 @@ class _Translations$progressPage$remainingTime$ja extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(
-    m,
-    other: '${m}分',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(m, other: '${m}分');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(
-    h,
-    other: '${h}時間',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ja'))(h, other: '${h}時間');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1473,9 +1461,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$ja extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'お気に入りリストにあるデバイスからのファイルリクエストを自動的に受け入れます。',
-  ];
+  List<String> get content => ['お気に入りリストにあるデバイスからのファイルリクエストを自動的に受け入れます。'];
 }
 
 // Path: dialogs.pin

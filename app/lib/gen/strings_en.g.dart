@@ -439,11 +439,8 @@ class Translations$receivePage$en {
   // Translations
 
   /// en: '(one) {wants to send you a file} (other) {wants to send you {n} files}'
-  String subTitle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
-    n,
-    one: 'wants to send you a file',
-    other: 'wants to send you ${n} files',
-  );
+  String subTitle({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'wants to send you a file', other: 'wants to send you ${n} files');
 
   /// en: 'sent you a message:'
   String get subTitleMessage => 'sent you a message:';
@@ -1148,6 +1145,18 @@ class Translations$settingsTab$receive$en {
 
   /// en: 'Verify checksums when receiving files'
   String get verifyChecksums => 'Verify checksums when receiving files';
+
+  /// en: 'Automatically accept incoming requests (TV)'
+  String get tvAutoAccept => 'Automatically accept incoming requests (TV)';
+
+  /// en: 'Stay running in the background (TV)'
+  String get keepAlive => 'Stay running in the background (TV)';
+
+  /// en: 'Open the installer after receiving an APK'
+  String get autoInstallApk => 'Open the installer after receiving an APK';
+
+  /// en: 'Could not open the installer. Check "install unknown apps" permission; the file is in the download folder.'
+  String get apkInstallFailed => 'Could not open the installer. Check "install unknown apps" permission; the file is in the download folder.';
 }
 
 // Path: settingsTab.send
@@ -1429,16 +1438,10 @@ class Translations$progressPage$remainingTime$en {
   // Translations
 
   /// en: '(other) {{m}m}'
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
-    m,
-    other: '${m}m',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(m, other: '${m}m');
 
   /// en: '(other) {{h}h}'
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(
-    h,
-    other: '${h}h',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(h, other: '${h}h');
 
   /// en: '{m}:{ss}'
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
@@ -1830,9 +1833,7 @@ class Translations$dialogs$quickSaveFromFavoritesNotice$en {
   /// en: 'Quick Save for "Favorites"'
   String get title => _root.general.quickSaveFromFavorites;
 
-  List<String> get content => [
-    'File requests are now accepted automatically from devices in your favorites list.',
-  ];
+  List<String> get content => ['File requests are now accepted automatically from devices in your favorites list.'];
 }
 
 // Path: dialogs.pin

@@ -391,11 +391,8 @@ class _Translations$receivePage$hu extends Translations$receivePage$en {
 
   // Translations
   @override
-  String subTitle({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(
-    n,
-    one: 'fájlt szeretne küldeni',
-    other: '${n} fájlt szeretne küldeni',
-  );
+  String subTitle({required num n}) =>
+      (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(n, one: 'fájlt szeretne küldeni', other: '${n} fájlt szeretne küldeni');
   @override
   String get subTitleMessage => 'üzenetet küldött:';
   @override
@@ -1140,15 +1137,9 @@ class _Translations$progressPage$remainingTime$hu extends Translations$progressP
 
   // Translations
   @override
-  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(
-    m,
-    other: '${m}p',
-  );
+  String minutesUnit({required num m}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(m, other: '${m}p');
   @override
-  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(
-    h,
-    other: '${h}ó',
-  );
+  String hoursUnit({required num h}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('hu'))(h, other: '${h}ó');
   @override
   String minutes({required Object m, required Object ss}) => '${m}:${ss}';
   @override
@@ -1482,9 +1473,7 @@ class _Translations$dialogs$quickSaveFromFavoritesNotice$hu extends Translations
   @override
   String get title => _root.general.quickSaveFromFavorites;
   @override
-  List<String> get content => [
-    'A fájlkérések auto. elfogadása mostantól a kedvencek listáján szereplő eszközökről.',
-  ];
+  List<String> get content => ['A fájlkérések auto. elfogadása mostantól a kedvencek listáján szereplő eszközökről.'];
 }
 
 // Path: dialogs.pin
