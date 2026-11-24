@@ -22,6 +22,10 @@
          FOREGROUND_SERVICE and POST_NOTIFICATIONS come from the flutter_foreground_task manifest. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
+    <!-- TV: boot auto-start + keep-alive foreground service -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+
     <!-- Android TV -->
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
@@ -102,9 +106,6 @@
             android:value="2" />
 
         <!-- TV: start LocalSend after boot so it can receive without being opened explicitly -->
-        <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-        <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-
         <receiver
             android:name=".BootReceiver"
             android:enabled="true"

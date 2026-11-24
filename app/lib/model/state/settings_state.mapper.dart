@@ -174,6 +174,21 @@ class SettingsStateMapper extends ClassMapperBase<SettingsState> {
     'advancedSettings',
     _$advancedSettings,
   );
+  static bool _$autoInstallApk(SettingsState v) => v.autoInstallApk;
+  static const Field<SettingsState, bool> _f$autoInstallApk = Field(
+    'autoInstallApk',
+    _$autoInstallApk,
+  );
+  static bool _$keepAlive(SettingsState v) => v.keepAlive;
+  static const Field<SettingsState, bool> _f$keepAlive = Field(
+    'keepAlive',
+    _$keepAlive,
+  );
+  static bool _$tvAutoAccept(SettingsState v) => v.tvAutoAccept;
+  static const Field<SettingsState, bool> _f$tvAutoAccept = Field(
+    'tvAutoAccept',
+    _$tvAutoAccept,
+  );
 
   @override
   final MappableFields<SettingsState> fields = const {
@@ -208,6 +223,9 @@ class SettingsStateMapper extends ClassMapperBase<SettingsState> {
     #verifyChecksums: _f$verifyChecksums,
     #discoveryTimeout: _f$discoveryTimeout,
     #advancedSettings: _f$advancedSettings,
+    #autoInstallApk: _f$autoInstallApk,
+    #keepAlive: _f$keepAlive,
+    #tvAutoAccept: _f$tvAutoAccept,
   };
 
   static SettingsState _instantiate(DecodingData data) {
@@ -243,6 +261,9 @@ class SettingsStateMapper extends ClassMapperBase<SettingsState> {
       verifyChecksums: data.dec(_f$verifyChecksums),
       discoveryTimeout: data.dec(_f$discoveryTimeout),
       advancedSettings: data.dec(_f$advancedSettings),
+      autoInstallApk: data.dec(_f$autoInstallApk),
+      keepAlive: data.dec(_f$keepAlive),
+      tvAutoAccept: data.dec(_f$tvAutoAccept),
     );
   }
 
@@ -344,6 +365,9 @@ abstract class SettingsStateCopyWith<$R, $In extends SettingsState, $Out>
     bool? verifyChecksums,
     int? discoveryTimeout,
     bool? advancedSettings,
+    bool? autoInstallApk,
+    bool? keepAlive,
+    bool? tvAutoAccept,
   });
   SettingsStateCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -444,6 +468,9 @@ class _SettingsStateCopyWithImpl<$R, $Out>
       if (verifyChecksums != null) #verifyChecksums: verifyChecksums,
       if (discoveryTimeout != null) #discoveryTimeout: discoveryTimeout,
       if (advancedSettings != null) #advancedSettings: advancedSettings,
+      if (autoInstallApk != null) #autoInstallApk: autoInstallApk,
+      if (keepAlive != null) #keepAlive: keepAlive,
+      if (tvAutoAccept != null) #tvAutoAccept: tvAutoAccept,
     }),
   );
   @override
