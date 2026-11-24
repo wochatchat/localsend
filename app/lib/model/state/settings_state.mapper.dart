@@ -431,6 +431,9 @@ class _SettingsStateCopyWithImpl<$R, $Out>
     bool? verifyChecksums,
     int? discoveryTimeout,
     bool? advancedSettings,
+    bool? autoInstallApk,
+    bool? keepAlive,
+    bool? tvAutoAccept,
   }) => $apply(
     FieldCopyWithData({
       if (showToken != null) #showToken: showToken,
@@ -518,6 +521,9 @@ class _SettingsStateCopyWithImpl<$R, $Out>
     verifyChecksums: data.get(#verifyChecksums, or: $value.verifyChecksums),
     discoveryTimeout: data.get(#discoveryTimeout, or: $value.discoveryTimeout),
     advancedSettings: data.get(#advancedSettings, or: $value.advancedSettings),
+    autoInstallApk: data.get(#autoInstallApk, or: $value.autoInstallApk),
+    keepAlive: data.get(#keepAlive, or: $value.keepAlive),
+    tvAutoAccept: data.get(#tvAutoAccept, or: $value.tvAutoAccept),
   );
 
   @override
