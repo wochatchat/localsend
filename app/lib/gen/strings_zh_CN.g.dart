@@ -197,6 +197,8 @@ class Translations$receiveTab$zh_CN extends Translations$receiveTab$en {
   late final Translations$receiveTab$quickSave$zh_CN quickSave = Translations$receiveTab$quickSave$zh_CN.internal(_root);
   @override
   String get link => '通过链接接收';
+  @override
+  String get qrHint => '手机扫码，即可在浏览器打开发送页面';
 }
 
 // Path: sendTab

@@ -214,6 +214,9 @@ class Translations$receiveTab$en {
 
   /// en: 'Receive via link'
   String get link => 'Receive via link';
+
+  /// en: 'Scan with your phone to open the send page in the browser'
+  String get qrHint => 'Scan with your phone to open the send page in the browser';
 }
 
 // Path: sendTab

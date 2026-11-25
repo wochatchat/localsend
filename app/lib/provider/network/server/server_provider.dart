@@ -9,6 +9,7 @@ import 'package:localsend_app/provider/network/server/controller/receive_control
 import 'package:localsend_app/provider/network/server/controller/send_controller.dart';
 import 'package:localsend_app/provider/network/server/server_utils.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/provider/tv_provider.dart';
 import 'package:localsend_app/util/alias_generator.dart';
 import 'package:localsend_app/util/native/web_pages_loader.dart';
 import 'package:localsend_isolates/constants.dart';
@@ -101,10 +102,14 @@ class ServerService extends Notifier<ServerState?> {
   /// Starts the server from user settings.
   Future<ServerState?> startServerFromSettings() async {
     final settings = ref.read(settingsProvider);
+    // TV: serve the web upload page by default so the receive tab can show a
+    // ready-to-scan QR code right away (no extra click to open the web share).
+    final web = ref.read(tvProvider) ? WebShareUpload(pin: settings.receivePin) : null;
     return startServer(
       alias: settings.alias,
       port: settings.port,
       https: settings.https,
+      web: web,
     );
   }
 

@@ -21,6 +21,7 @@ import 'package:localsend_app/widget/local_send_logo.dart';
 import 'package:localsend_app/widget/responsive_list_view.dart';
 import 'package:localsend_app/widget/rotating_widget.dart';
 import 'package:localsend_isolates/util/sleep.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:refena_flutter/addons.dart';
 import 'package:refena_flutter/refena_flutter.dart';
 import 'package:routerino/routerino.dart';
@@ -103,6 +104,16 @@ class _ReceiveTabState extends State<ReceiveTab> {
                             textAlign: TextAlign.center,
                           ),
                         ),
+                        if (context.ref.read(tvProvider) && serverState != null && localIps.isNotEmpty)
+                          Flexible(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 15),
+                                child: _TvReceiveQr(serverState: serverState, ip: localIps.first),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -183,24 +194,83 @@ class _TvDebugLineState extends State<_TvDebugLine> {
     final status = _status;
     final endpoint = serverState == null ? '-' : '${serverState.https ? 'https' : 'http'}:${serverState.port}';
     final ip = localIps.isEmpty ? '-' : localIps.first;
+    final log = _log.isEmpty ? '-' : _log.replaceAll('\n', ' | ');
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 4),
-        child: Text(
-          'DBG srv=${_flag(serverState != null)} $endpoint '
-          'fgs=${_flag(status?['fgs'])} mc=${_flag(status?['multicast'])} '
-          'wl=${_flag(status?['wake'])} wifi=${_flag(status?['wifi'])} ip=$ip',
-          style: TextStyle(
-            fontSize: 11,
-            fontFamily: 'monospace',
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'DBG srv=${_flag(serverState != null)} $endpoint '
+              'fgs=${_flag(status?['fgs'])} mc=${_flag(status?['multicast'])} '
+              'wl=${_flag(status?['wake'])} wifi=${_flag(status?['wifi'])} ip=$ip',
+              style: TextStyle(
+                fontSize: 11,
+                fontFamily: 'monospace',
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              log,
+              style: TextStyle(
+                fontSize: 11,
+                fontFamily: 'monospace',
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
+    );
+  }
+}
+
+/// TV: the receive service URL + QR code, always visible so a phone can join
+/// the web send page without any interaction on the TV side.
+class _TvReceiveQr extends StatelessWidget {
+  final ServerState serverState;
+  final String ip;
+
+  const _TvReceiveQr({required this.serverState, required this.ip});
+
+  @override
+  Widget build(BuildContext context) {
+    final url = '${serverState.https ? 'https' : 'http'}://$ip:${serverState.port}';
+    final pin = serverState.web?.pin;
+    final urlWithPin = switch (pin) {
+      String() => '$url/?pin=${Uri.encodeQueryComponent(pin)}',
+      null => url,
+    };
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(t.receiveTab.qrHint, style: const TextStyle(fontSize: 18), textAlign: TextAlign.center),
+        const SizedBox(height: 10),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+          child: SizedBox(
+            width: 200,
+            height: 200,
+            child: PrettyQrView.data(
+              data: urlWithPin,
+              errorCorrectLevel: QrErrorCorrectLevel.Q,
+              decoration: PrettyQrDecoration(shape: PrettyQrSmoothSymbol(roundFactor: 0, color: Colors.black)),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Text(url, style: const TextStyle(fontSize: 20), textAlign: TextAlign.center),
+      ],
     );
   }
 }
