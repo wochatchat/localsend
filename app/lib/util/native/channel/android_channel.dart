@@ -98,6 +98,16 @@ Future<Map<String, bool>?> keepAliveStatusAndroid() async {
   }
 }
 
+/// Last lines of the native keep-alive log (TV diagnostics only, empty on failure).
+Future<String> keepAliveLogAndroid() async {
+  try {
+    final result = await _methodChannel.invokeMethod<String>('keepAliveLog');
+    return result ?? '';
+  } catch (e) {
+    return '';
+  }
+}
+
 /// Opens the system installer for a received APK file.
 /// Returns false when no installer handled the request (e.g. TV without sideloading support
 /// or "install unknown apps" permission missing) so the caller can show a hint.

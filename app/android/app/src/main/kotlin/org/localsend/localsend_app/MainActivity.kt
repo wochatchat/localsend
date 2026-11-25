@@ -61,9 +61,14 @@ class MainActivity : FlutterActivity() {
     override fun onStart() {
         super.onStart()
         activityInForeground = true
-        // In the foreground the receive server is already alive with the activity;
-        // drop the extra keep-alive notification while the user looks at the app.
-        KeepAliveService.stop(this)
+        // The service (and its network locks) stays resident whenever the app runs:
+        // on TV the discovery multicasts must keep flowing even while the activity is
+        // visible, and stopping/restarting it caused gaps where the sender could not
+        // find this device. Phones keep the upstream behavior (service only while
+        // backgrounded, see onStop); keep-alive can be disabled in the settings.
+        if (KeepAliveService.isTv(this)) {
+            KeepAliveService.maybeStart(this)
+        }
     }
 
     override fun onStop() {
@@ -176,12 +181,16 @@ class MainActivity : FlutterActivity() {
                 "keepAliveStatus" -> {
                     result.success(
                         mapOf(
-                            "fgs" to KeepAliveService.isRunning,
-                            "multicast" to KeepAliveService.multicastHeld,
+                            "fgs" to KeepAliveService.isRunning,                            "multicast" to KeepAliveService.multicastHeld,
                             "wake" to KeepAliveService.wakeHeld,
                             "wifi" to KeepAliveService.wifiHeld,
+                            "log" to KeepAliveService.logTail(),
                         )
                     )
+                }
+
+                "keepAliveLog" -> {
+                    result.success(KeepAliveService.logTail())
                 }
 
                 "installApk" -> {

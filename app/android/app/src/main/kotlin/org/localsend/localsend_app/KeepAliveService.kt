@@ -14,6 +14,10 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.os.PowerManager
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 /**
  * Foreground service that keeps the app process (and thus the LocalSend receive server
@@ -31,9 +35,10 @@ import android.os.PowerManager
  * - a partial wake lock, keeping the CPU up when the screen turns off / standby kicks in,
  *   so the HTTP server still answers.
  *
- * When the activity comes to the foreground again the service is stopped and the locks
- * are released (a visible screen keeps WiFi active anyway); they are re-acquired when
- * the activity moves to the background ([MainActivity.onStop]).
+ * When the activity is visible the service keeps running as well: stopping it on
+ * [MainActivity.onStart] left gaps where discovery packets were dropped again, so it
+ * now stays resident from app start until keep-alive is disabled in the settings
+ * (or the activity is destroyed).
  */
 class KeepAliveService : Service() {
 
@@ -43,6 +48,7 @@ class KeepAliveService : Service() {
         isRunning = true
         startInForeground()
         ensureNetworkLocks(this)
+        log(this, "onStartCommand src=${describeIntent(intent)} fgs=true")
 
         // BOOT_COMPLETED may arrive before the system is ready to start activities,
         // and some TV ROMs silently drop the attempt made by [BootReceiver]. Retry
@@ -72,6 +78,7 @@ class KeepAliveService : Service() {
     override fun onDestroy() {
         isRunning = false
         bootRetryScheduled = false
+        log(this, "onDestroy")
         releaseNetworkLocks()
         super.onDestroy()
     }
@@ -176,6 +183,7 @@ class KeepAliveService : Service() {
                     multicastLock = lock
                 }
                 multicastHeld = multicastLock?.isHeld == true
+                log(context, "multicastLock held=$multicastHeld")
             }
             val pm = context.applicationContext.getSystemService(Context.POWER_SERVICE) as? PowerManager
             if (wakeLock == null && pm != null) {
@@ -186,6 +194,7 @@ class KeepAliveService : Service() {
                     wakeLock = lock
                 }
                 wakeHeld = wakeLock?.isHeld == true
+                log(context, "wakeLock held=$wakeHeld")
             }
             if (wifiLock == null && wifi != null) {
                 runCatching {
@@ -195,6 +204,7 @@ class KeepAliveService : Service() {
                     wifiLock = lock
                 }
                 wifiHeld = wifiLock?.isHeld == true
+                log(context, "wifiLock held=$wifiHeld")
             }
         }
 
@@ -209,6 +219,53 @@ class KeepAliveService : Service() {
             multicastHeld = false
             wakeHeld = false
             wifiHeld = false
+        }
+
+        /// Appends a timestamped line to keepalive.log in the app's external files
+        /// directory (USB-visible on many TVs). Used to diagnose why background
+        /// receiving failed: a gap in timestamps means the process was killed, a
+        /// continuous log with failed transfers means the process lived but the
+        /// network path was broken. Never throws; logging failures are ignored.
+        fun log(context: Context, message: String) {
+            try {
+                val dir = context.getExternalFilesDir(null) ?: return
+                logDir = dir
+                val file = File(dir, LOG_FILE_NAME)
+                val stamp = SimpleDateFormat("MM-dd HH:mm:ss", Locale.US).format(Date())
+                file.appendText("[$stamp] $message\n")
+                // Keep the file small: rewrite with only the newest lines once it grows.
+                val lines = file.readLines()
+                if (lines.size > LOG_MAX_LINES) {
+                    file.writeText(lines.takeLast(LOG_MAX_LINES / 2).joinToString(separator = "", postfix = "\n"))
+                }
+            } catch (e: Exception) {
+                // Diagnostic logging only; ignore any failure.
+            }
+        }
+
+        /// Last lines of the log, surfaced through the keepAliveStatus channel and
+        /// shown on the TV debug line so the user can screenshot the state.
+        fun logTail(): String {
+            return try {
+                val dir = logDir ?: return ""
+                val file = File(dir, LOG_FILE_NAME)
+                if (!file.exists()) "" else file.readLines().takeLast(LOG_TAIL_LINES).joinToString("\n")
+            } catch (e: Exception) {
+                ""
+            }
+        }
+
+        @Volatile
+        private var logDir: File? = null
+
+        private const val LOG_FILE_NAME = "keepalive.log"
+        private const val LOG_MAX_LINES = 200
+        private const val LOG_TAIL_LINES = 8
+
+        fun describeIntent(intent: Intent?): String = when {
+            intent == null -> "restart(sticky)"
+            intent.getBooleanExtra(EXTRA_FROM_BOOT, false) -> "boot"
+            else -> "start"
         }
 
         /// Starts the service only when the user did not disable keep-alive in the app settings.
