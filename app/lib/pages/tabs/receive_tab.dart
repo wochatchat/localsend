@@ -240,6 +240,8 @@ class _TvDebugLineState extends State<_TvDebugLine> {
 
 /// TV: the receive service URL + QR code, always visible so a phone can join
 /// the web send page without any interaction on the TV side.
+/// Next to the QR code there is an equally sized tile that opens the
+/// transfer history page (easier to reach with a remote than the corner icon).
 class _TvReceiveQr extends StatelessWidget {
   final ServerState serverState;
   final String ip;
@@ -260,22 +262,63 @@ class _TvReceiveQr extends StatelessWidget {
       children: [
         Text(t.receiveTab.qrHint, style: const TextStyle(fontSize: 18), textAlign: TextAlign.center),
         const SizedBox(height: 10),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
-          child: SizedBox(
-            width: 200,
-            height: 200,
-            child: PrettyQrView.data(
-              data: urlWithPin,
-              errorCorrectLevel: QrErrorCorrectLevel.Q,
-              decoration: PrettyQrDecoration(shape: PrettyQrSmoothSymbol(roundFactor: 0, color: Colors.black)),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+              child: SizedBox(
+                width: 200,
+                height: 200,
+                child: PrettyQrView.data(
+                  data: urlWithPin,
+                  errorCorrectLevel: QrErrorCorrectLevel.Q,
+                  decoration: PrettyQrDecoration(shape: PrettyQrSmoothSymbol(roundFactor: 0, color: Colors.black)),
+                ),
+              ),
             ),
-          ),
+            const SizedBox(width: 20),
+            _TvHistoryTile(),
+          ],
         ),
         const SizedBox(height: 10),
         Text(url, style: const TextStyle(fontSize: 20), textAlign: TextAlign.center),
       ],
+    );
+  }
+}
+
+/// TV: a tile next to the QR code that opens the receive history page.
+/// Styled like the QR container (white, same size) with a file icon.
+class _TvHistoryTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () async {
+          await context.push(() => const ReceiveHistoryPage());
+        },
+        child: SizedBox(
+          width: 200,
+          height: 200,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.insert_drive_file, size: 100, color: Colors.black54),
+              const SizedBox(height: 12),
+              Text(
+                t.receiveHistoryPage.title,
+                style: const TextStyle(fontSize: 18, color: Colors.black87),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -304,11 +347,15 @@ class _CornerButtons extends StatelessWidget {
               AnimatedOpacity(
                 opacity: showHistoryButton ? 1 : 0,
                 duration: const Duration(milliseconds: 200),
-                child: CustomIconButton(
-                  onPressed: () async {
-                    await context.push(() => const ReceiveHistoryPage());
-                  },
-                  child: const Icon(Icons.history),
+                child: ExcludeFocus(
+                  // The faded-out button must not be reachable by D-pad traversal.
+                  excluding: !showHistoryButton,
+                  child: CustomIconButton(
+                    onPressed: () async {
+                      await context.push(() => const ReceiveHistoryPage());
+                    },
+                    child: const Icon(Icons.history),
+                  ),
                 ),
               ),
             CustomIconButton(
@@ -336,11 +383,15 @@ class _InfoBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedCrossFade(
-      crossFadeState: showAdvanced ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-      duration: const Duration(milliseconds: 200),
-      firstChild: Container(),
-      secondChild: Align(
+    return ExcludeFocus(
+      // The faded-out info box contains selectable texts that would otherwise
+      // still be reachable by D-pad traversal.
+      excluding: !showAdvanced,
+      child: AnimatedCrossFade(
+        crossFadeState: showAdvanced ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+        duration: const Duration(milliseconds: 200),
+        firstChild: Container(),
+        secondChild: Align(
         alignment: Alignment.topRight,
         child: Padding(
           padding: const EdgeInsets.all(15),
@@ -389,6 +440,7 @@ class _InfoBox extends StatelessWidget {
             ),
           ),
         ),
+      ),
       ),
     );
   }
