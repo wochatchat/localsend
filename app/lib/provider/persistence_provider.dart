@@ -99,6 +99,7 @@ const _lsAutoInstallApk = 'ls_auto_install_apk';
 const _lsTvAutoAccept = 'ls_tv_auto_accept';
 const _advancedSettingsKey = 'ls_advanced_settings';
 const _whatsNewKey = 'ls_whats_new';
+const _selectedTabKey = 'ls_selected_tab';
 
 final persistenceProvider = Provider<PersistenceService>((ref) {
   throw Exception('persistenceProvider not initialized');
@@ -481,6 +482,16 @@ class PersistenceService {
 
   Future<void> setAdvancedSettingsEnabled(bool isEnabled) async {
     await _prefs.setBool(_advancedSettingsKey, isEnabled);
+  }
+
+  /// The last selected home tab (index of [HomeTab]) so that the app reopens
+  /// on the tab that was visible when it was closed.
+  int getSelectedTab() {
+    return _prefs.getInt(_selectedTabKey) ?? 0;
+  }
+
+  Future<void> setSelectedTab(int index) async {
+    await _prefs.setInt(_selectedTabKey, index);
   }
 
   QuickSaveMode getQuickSave() {
