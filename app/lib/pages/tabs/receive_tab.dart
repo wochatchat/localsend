@@ -163,6 +163,7 @@ class _TvDebugLine extends StatefulWidget {
 
 class _TvDebugLineState extends State<_TvDebugLine> {
   Map<String, bool>? _status;
+  String _log = '';
   Timer? _timer;
 
   @override
@@ -180,8 +181,12 @@ class _TvDebugLineState extends State<_TvDebugLine> {
 
   Future<void> _refresh() async {
     final status = await keepAliveStatusAndroid();
+    final log = await keepAliveLogAndroid();
     if (mounted) {
-      setState(() => _status = status);
+      setState(() {
+        _status = status;
+        _log = log;
+      });
     }
   }
 
