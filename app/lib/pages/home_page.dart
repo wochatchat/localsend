@@ -66,11 +66,16 @@ class _HomePageState extends State<HomePage> with Refena {
   @override
   void initState() {
     super.initState();
+    // The controller already restored the last tab (see [HomePageController]).
     // Do not steal the focus on app start: ReceiveTab manages its own autofocus.
     _lastTvTab = widget.initialTab;
-
     ensureRef((ref) async {
-      ref.redux(homePageControllerProvider).dispatch(ChangeTabAction(widget.initialTab));
+      // On a plain app start the controller already restored the last tab from
+      // persistence; only sync [widget.initialTab] for explicit re-entries
+      // (e.g. tapping a transfer notification) that request another tab.
+      if (!widget.appStart && ref.read(homePageControllerProvider).currentTab != widget.initialTab) {
+        ref.redux(homePageControllerProvider).dispatch(ChangeTabAction(widget.initialTab));
+      }
       await postInit(context, ref, widget.appStart);
     });
   }
@@ -179,14 +184,21 @@ class _HomePageState extends State<HomePage> with Refena {
                           physics: const NeverScrollableScrollPhysics(),
                           children: [
                             for (final tab in HomeTab.values)
-                              Focus(
-                                focusNode: _tabFocusNodes[tab.index],
-                                includeSemantics: false,
-                                child: switch (tab) {
-                                  HomeTab.receive => const ReceiveTab(),
-                                  HomeTab.send => const SendTab(),
-                                  HomeTab.settings => const SettingsTab(),
-                                },
+                              ExcludeFocus(
+                                // Hidden PageView pages stay mounted: exclude them
+                                // from focus traversal so the D-pad cannot wander
+                                // into an invisible tab.
+                                excluding: tab != vm.currentTab,
+                                child: Focus(
+                                  focusNode: _tabFocusNodes[tab.index],
+                                  skipTraversal: true,
+                                  includeSemantics: false,
+                                  child: switch (tab) {
+                                    HomeTab.receive => const ReceiveTab(),
+                                    HomeTab.send => const SendTab(),
+                                    HomeTab.settings => const SettingsTab(),
+                                  },
+                                ),
                               ),
                           ],
                         ),
