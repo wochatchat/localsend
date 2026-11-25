@@ -160,40 +160,41 @@ class KeepAliveService : Service() {
 
         /// Acquires the multicast / wake / wifi locks (TV only, idempotent).
         /// They keep discovery and transfers working while the app is in the
-        /// background, screen off or in standby.
+        /// background, screen off or in standby. A failing lock is never fatal:
+        /// receiving still works with the remaining locks (and on the foreground
+        /// screen without any of them).
         fun ensureNetworkLocks(context: Context) {
             if (!isTv(context)) {
                 return
             }
-            if (multicastLock == null) {
-                val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
-                if (wifi != null) {
+            val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
+            if (multicastLock == null && wifi != null) {
+                runCatching {
                     val lock = wifi.createMulticastLock("localsend_multicast")
                     lock.setReferenceCounted(false)
                     lock.acquire()
                     multicastLock = lock
-                    multicastHeld = lock.isHeld
                 }
+                multicastHeld = multicastLock?.isHeld == true
             }
-            if (wakeLock == null) {
-                val pm = context.applicationContext.getSystemService(Context.POWER_SERVICE) as? PowerManager
-                if (pm != null) {
+            val pm = context.applicationContext.getSystemService(Context.POWER_SERVICE) as? PowerManager
+            if (wakeLock == null && pm != null) {
+                runCatching {
                     val lock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "localsend:keep_alive")
                     lock.setReferenceCounted(false)
                     lock.acquire()
                     wakeLock = lock
-                    wakeHeld = lock.isHeld
                 }
+                wakeHeld = wakeLock?.isHeld == true
             }
-            if (wifiLock == null) {
-                val wifi = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as? WifiManager
-                if (wifi != null) {
+            if (wifiLock == null && wifi != null) {
+                runCatching {
                     val lock = wifi.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "localsend_wifi")
                     lock.setReferenceCounted(false)
                     lock.acquire()
                     wifiLock = lock
-                    wifiHeld = lock.isHeld
                 }
+                wifiHeld = wifiLock?.isHeld == true
             }
         }
 
