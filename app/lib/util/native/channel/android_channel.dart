@@ -26,17 +26,30 @@ Future<PickDirectoryResult?> pickDirectoryAndroid() async {
 }
 
 Future<String?> pickDirectoryPathAndroid() async {
-  final result = await _methodChannel.invokeMethod<String>('pickDirectoryPath');
-  return result;
+  try {
+    return await _methodChannel.invokeMethod<String>('pickDirectoryPath');
+  } on PlatformException catch (e) {
+    if (e.code == 'CANCELED') {
+      return null; // user canceled the picker: treat like a normal cancel
+    }
+    rethrow;
+  }
 }
 
 Future<List<FileInfo>?> pickFilesAndroid() async {
-  final result = await _methodChannel.invokeMethod<List>('pickFiles');
-  if (result == null) {
-    return null;
-  }
+  try {
+    final result = await _methodChannel.invokeMethod<List>('pickFiles');
+    if (result == null) {
+      return null;
+    }
 
-  return result.map((e) => FileInfoMapper.fromJson((e as Map).cast<String, dynamic>())).toList();
+    return result.map((e) => FileInfoMapper.fromJson((e as Map).cast<String, dynamic>())).toList();
+  } on PlatformException catch (e) {
+    if (e.code == 'CANCELED') {
+      return null; // user canceled the picker: treat like a normal cancel
+    }
+    rethrow;
+  }
 }
 
 /// Returns the global "Download" directory, e.g. /storage/emulated/0/Download.

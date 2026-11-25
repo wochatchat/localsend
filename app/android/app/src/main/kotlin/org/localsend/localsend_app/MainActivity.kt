@@ -15,6 +15,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.Settings
+import android.widget.Toast
 import android.webkit.MimeTypeMap
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -390,10 +391,17 @@ class MainActivity : FlutterActivity() {
     private fun openDirectoryPicker(onlyPath: Boolean) {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-        startActivityForResult(
-            intent,
-            if (onlyPath) REQUEST_CODE_PICK_DIRECTORY_PATH else REQUEST_CODE_PICK_DIRECTORY
-        )
+        try {
+            startActivityForResult(
+                intent,
+                if (onlyPath) REQUEST_CODE_PICK_DIRECTORY_PATH else REQUEST_CODE_PICK_DIRECTORY
+            )
+        } catch (e: ActivityNotFoundException) {
+            // TV ROMs often ship no DocumentsUI; report "canceled" instead of crashing.
+            Toast.makeText(this, R.string.no_system_file_picker, Toast.LENGTH_LONG).show()
+            pendingResult?.success(null)
+            pendingResult = null
+        }
     }
 
     private fun openFilePicker() {
@@ -404,7 +412,14 @@ class MainActivity : FlutterActivity() {
             type = "*/*"
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         }
-        startActivityForResult(intent, REQUEST_CODE_PICK_FILE)
+        try {
+            startActivityForResult(intent, REQUEST_CODE_PICK_FILE)
+        } catch (e: ActivityNotFoundException) {
+            // TV ROMs often ship no DocumentsUI; report "canceled" instead of crashing.
+            Toast.makeText(this, R.string.no_system_file_picker, Toast.LENGTH_LONG).show()
+            pendingResult?.success(null)
+            pendingResult = null
+        }
     }
 
     @SuppressLint("WrongConstant")
