@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/model/state/server/server_state.dart';
@@ -9,7 +11,9 @@ import 'package:localsend_app/provider/animation_provider.dart';
 import 'package:localsend_app/provider/local_ip_provider.dart';
 import 'package:localsend_app/provider/network/server/server_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/provider/tv_provider.dart';
 import 'package:localsend_app/util/ip_helper.dart';
+import 'package:localsend_app/util/native/channel/android_channel.dart';
 import 'package:localsend_app/widget/animations/initial_fade_transition.dart';
 import 'package:localsend_app/widget/column_list_view.dart';
 import 'package:localsend_app/widget/custom_icon_button.dart';
@@ -130,7 +134,73 @@ class _ReceiveTabState extends State<ReceiveTab> {
           showHistoryButton: _showHistoryButton,
           toggleAdvanced: _toggleAdvanced,
         ),
+        if (context.watch(tvProvider)) const _TvDebugLine(),
       ],
+    );
+  }
+}
+
+/// Temporary TV diagnostic line (remove once background receiving is verified).
+/// Renders the server state plus the native keep-alive locks in a single row,
+/// so one screenshot of the receive page pins down where the receiving chain breaks.
+class _TvDebugLine extends StatefulWidget {
+  const _TvDebugLine();
+
+  @override
+  State<_TvDebugLine> createState() => _TvDebugLineState();
+}
+
+class _TvDebugLineState extends State<_TvDebugLine> {
+  Map<String, bool>? _status;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _refresh();
+    _timer = Timer.periodic(const Duration(seconds: 3), (_) => _refresh());
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _refresh() async {
+    final status = await keepAliveStatusAndroid();
+    if (mounted) {
+      setState(() => _status = status);
+    }
+  }
+
+  String _flag(bool? value) => value == true ? '1' : '0';
+
+  @override
+  Widget build(BuildContext context) {
+    final serverState = context.watch(serverProvider);
+    final localIps = context.watch(localIpProvider.select((s) => s.localIps));
+    final status = _status;
+    final endpoint = serverState == null ? '-' : '${serverState.https ? 'https' : 'http'}:${serverState.port}';
+    final ip = localIps.isEmpty ? '-' : localIps.first;
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: Text(
+          'DBG srv=${_flag(serverState != null)} $endpoint '
+          'fgs=${_flag(status?['fgs'])} mc=${_flag(status?['multicast'])} '
+          'wl=${_flag(status?['wake'])} wifi=${_flag(status?['wifi'])} ip=$ip',
+          style: TextStyle(
+            fontSize: 11,
+            fontFamily: 'monospace',
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 }

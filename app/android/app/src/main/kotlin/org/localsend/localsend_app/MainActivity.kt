@@ -7,6 +7,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.database.Cursor
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -59,6 +60,7 @@ class MainActivity : FlutterActivity() {
 
     override fun onStart() {
         super.onStart()
+        activityInForeground = true
         // In the foreground the receive server is already alive with the activity;
         // drop the extra keep-alive notification while the user looks at the app.
         KeepAliveService.stop(this)
@@ -66,6 +68,7 @@ class MainActivity : FlutterActivity() {
 
     override fun onStop() {
         super.onStop()
+        activityInForeground = false
         // Background: pin the process so the LAN server keeps answering (TV use case).
         KeepAliveService.maybeStart(this)
     }
@@ -82,6 +85,11 @@ class MainActivity : FlutterActivity() {
     // Overriding the static methods we need from the Java class, as described
     // in the documentation of `FlutterActivity.NewEngineIntentBuilder`
     companion object {
+        /// True while MainActivity is visible; used by KeepAliveService to decide
+        /// whether the delayed boot-time activity relaunch may take the foreground.
+        @Volatile
+        var activityInForeground: Boolean = false
+
         fun withNewEngine(): NewEngineIntentBuilder {
             return NewEngineIntentBuilder(MainActivity::class.java)
         }
@@ -163,6 +171,17 @@ class MainActivity : FlutterActivity() {
                 "stopKeepAliveService" -> {
                     KeepAliveService.stop(applicationContext)
                     result.success(null)
+                }
+
+                "keepAliveStatus" -> {
+                    result.success(
+                        mapOf(
+                            "fgs" to KeepAliveService.isRunning,
+                            "multicast" to KeepAliveService.multicastHeld,
+                            "wake" to KeepAliveService.wakeHeld,
+                            "wifi" to KeepAliveService.wifiHeld,
+                        )
+                    )
                 }
 
                 "installApk" -> {
@@ -568,6 +587,21 @@ class MainActivity : FlutterActivity() {
             .setDataAndType(uri, "application/vnd.android.package-archive")
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
 
+        // TVs register several APK handlers (system installer, file managers, app stores),
+        // so an implicit ACTION_VIEW pops an "open with" chooser. Resolve the actual system
+        // installer and launch it explicitly to skip the chooser.
+        val installer = resolveSystemInstaller(intent)
+        if (installer != null) {
+            try {
+                val explicit = Intent(intent)
+                    .setClassName(installer.activityInfo.packageName, installer.activityInfo.name)
+                startActivity(explicit)
+                return true
+            } catch (e: Exception) {
+                // Fall through to the implicit launch below.
+            }
+        }
+
         return try {
             startActivity(intent)
             true
@@ -580,6 +614,40 @@ class MainActivity : FlutterActivity() {
         } catch (e: Exception) {
             false
         }
+    }
+
+    /// Picks the system package installer out of all handlers registered for an APK
+    /// ACTION_VIEW intent. Preference order:
+    /// 1. known system installer packages (Google/AOSP),
+    /// 2. any handler whose package name contains "packageinstaller",
+    /// 3. the only handler, when exactly one is registered (nothing to choose anyway).
+    /// Returns null when several third-party handlers exist and none looks like the
+    /// system installer; the implicit launch then shows the chooser as a last resort.
+    private fun resolveSystemInstaller(intent: Intent): ResolveInfo? {
+        val candidates = try {
+            packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        } catch (e: Exception) {
+            emptyList()
+        }
+        if (candidates.isEmpty()) {
+            return null
+        }
+
+        val knownInstallers = listOf(
+            "com.google.android.packageinstaller",
+            "com.android.packageinstaller",
+        )
+        candidates.firstOrNull { it.activityInfo.packageName in knownInstallers }?.let { return it }
+
+        candidates.firstOrNull {
+            it.activityInfo.packageName.contains("packageinstaller", ignoreCase = true) &&
+                it.activityInfo.packageName != packageName
+        }?.let { return it }
+
+        if (candidates.size == 1) {
+            return candidates[0]
+        }
+        return null
     }
 
     private fun requestInstallPermission() {

@@ -26,10 +26,11 @@ class BootReceiver : BroadcastReceiver() {
         try {
             context.startActivity(launch)
         } catch (e: Exception) {
-            // Ignore; fall back to the service below.
+            // Ignore; fall back to the service below, which retries the activity
+            // start once the system has settled (TV ROMs may drop early attempts).
         }
 
-        KeepAliveService.maybeStart(context)
+        KeepAliveService.maybeStart(context, fromBoot = true)
     }
 
     companion object {

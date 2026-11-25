@@ -82,6 +82,22 @@ Future<void> stopKeepAliveServiceAndroid() async {
   }
 }
 
+/// Native keep-alive diagnostics: which locks the foreground service currently
+/// holds (fgs = service running, multicast / wake / wifi = locks held).
+/// Used by the TV debug line on the receive page.
+Future<Map<String, bool>?> keepAliveStatusAndroid() async {
+  try {
+    final result = await _methodChannel.invokeMethod<Map>('keepAliveStatus');
+    if (result == null) {
+      return null;
+    }
+    return result.map((key, value) => MapEntry(key.toString(), value == true));
+  } catch (e) {
+    _logger.warning('Could not read keep-alive status', e);
+    return null;
+  }
+}
+
 /// Opens the system installer for a received APK file.
 /// Returns false when no installer handled the request (e.g. TV without sideloading support
 /// or "install unknown apps" permission missing) so the caller can show a hint.
