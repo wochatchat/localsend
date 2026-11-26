@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- LocalSend IME panel, fixed dark palette (matches app dark theme) -->
+    <color name="ime_bg">#161D1C</color>
+    <color name="ime_teal">#82D5C8</color>
+    <color name="ime_text">#DDE4E1</color>
+    <color name="ime_text_dim">#BEC9C6</color>
+    <color name="ime_orange">#FFB74D</color>
+    <color name="ime_btn_bg">#252B2A</color>
+    <color name="ime_btn_stroke">#3F4947</color>
+    <color name="ime_btn_focus_bg">#9EF2E4</color>
+    <color name="ime_btn_focus_stroke">#006A60</color>
+    <color name="ime_btn_focus_text">#003731</color>
+    <color name="ime_green">#4CAF50</color>
+</resources>

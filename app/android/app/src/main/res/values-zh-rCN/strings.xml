@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="no_system_file_picker">此设备没有系统文件选择器</string>
+
+    <!-- LocalSend IME（TV 键盘） -->
+    <string name="ime_name">LocalSend 键盘</string>
+    <string name="ime_qr_desc">打开键盘页面的二维码</string>
+    <string name="ime_status_waiting">● 等待连接…</string>
+    <string name="ime_status_connected">● 已连接（%1$s）</string>
+    <string name="ime_status_disabled">● 已停用。打开 LocalSend 以启用 TV 键盘</string>
+    <string name="ime_password_warning">🔒 检测到密码框：输入内容将以明文经局域网传输。敏感密码建议直接在电视上输入。</string>
+    <string name="ime_btn_switch">切换输入法</string>
+    <string name="ime_btn_settings">设置</string>
+    <string name="ime_btn_close">关闭</string>
+    <string name="ime_hint_same_lan">手机与电视需在同一网络</string>
 </resources>

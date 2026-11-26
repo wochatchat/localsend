@@ -99,3 +99,9 @@ android.applicationVariants.all { variant ->
         }
     }
 }
+
+// TV keyboard (IME) companion HTTP server + QR code generation
+dependencies {
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
+    implementation 'com.google.zxing:core:3.5.3'
+}
