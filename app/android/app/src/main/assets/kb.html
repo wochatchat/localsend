@@ -114,10 +114,18 @@
   <button id="sendDraft" class="primary">⬆ 整段上屏（替换电视内容）</button>
   <div class="tools">
     <button id="bs" class="">⌫ 退格</button>
+    <button id="word" class="">删词</button>
+    <button id="forward" class="">删右侧</button>
     <button id="left" class="outlined">←</button>
     <button id="right" class="outlined">→</button>
+    <button id="home" class="outlined">行首</button>
+    <button id="end" class="outlined">行尾</button>
     <button id="enter" class="primary">↵ Enter</button>
     <button id="tab" class="outlined">Tab</button>
+    <button id="selectAll" class="outlined">全选</button>
+    <button id="copy" class="outlined">复制</button>
+    <button id="cut" class="outlined">剪切</button>
+    <button id="paste" class="outlined">粘贴</button>
   </div>
 </main>
 <footer>由电视上的 LocalSend 提供 · 输入内容仅经局域网传输</footer>
@@ -138,6 +146,7 @@
   var tvModel = '';
   var tvCursor = 0;
   var composing = false;
+  var snapshotReady = false;
   var started = false;
 
   function apiUrl(path) {
@@ -153,6 +162,24 @@
     }).then(function (r) {
       if (!r.ok) throw new Error('http ' + r.status);
       return r.json();
+    });
+  }
+
+  function getJson(path) {
+    return fetch(apiUrl(path)).then(function (r) {
+      if (!r.ok) throw new Error('http ' + r.status);
+      return r.json();
+    });
+  }
+
+  function syncSnapshot() {
+    return getJson('/kb/snapshot').then(function (s) {
+      if (!s.ok) throw new Error(s.error || 'snapshot unavailable');
+      tvModel = s.text || '';
+      tvCursor = Math.max(0, (s.selectionStart || 0) - (s.startOffset || 0));
+      ta.value = tvModel;
+      ta.selectionStart = ta.selectionEnd = Math.min(tvCursor, ta.value.length);
+      snapshotReady = true;
     });
   }
 
@@ -207,6 +234,7 @@
 
   function handleDiff() {
     if (!started) { started = true; hint.style.display = 'none'; }
+    if (!snapshotReady) return;
     var next = ta.value;
     if (mode === 'realtime') {
       var r = buildOps(tvModel, next);
@@ -264,6 +292,29 @@
   document.getElementById('tab').addEventListener('click', function () {
     enqueue([{ op: 'key', code: 'tab' }]);
   });
+  document.getElementById('word').addEventListener('click', function () {
+    enqueue([{ op: 'key', code: 'deleteWord' }]);
+  });
+  document.getElementById('forward').addEventListener('click', function () {
+    enqueue([{ op: 'del', before: 0, after: 1 }]);
+  });
+  document.getElementById('home').addEventListener('click', function () {
+    enqueue([{ op: 'key', code: 'home' }]);
+  });
+  document.getElementById('end').addEventListener('click', function () {
+    enqueue([{ op: 'key', code: 'end' }]);
+  });
+  ['selectAll', 'copy', 'cut', 'paste'].forEach(function (name) {
+    document.getElementById(name).addEventListener('click', function () {
+      enqueueAction(name);
+    });
+  });
+  function enqueueAction(action) {
+    chain = chain.then(function () { return postJson('/kb/action', { action: action }); })
+      .then(function (res) { if (res && res.applied === false) throw new Error('not applied'); })
+      .then(syncSnapshot)
+      .catch(function (e) { setPill('red', '发送失败'); throw e; });
+  }
 
   // ---------- mode ----------
   var btnRealtime = document.getElementById('modeRealtime');
@@ -290,10 +341,7 @@
 
   // ---------- state polling ----------
   function poll() {
-    fetch(apiUrl('/kb/state')).then(function (r) {
-      if (!r.ok) throw new Error('http ' + r.status);
-      return r.json();
-    }).then(function (s) {
+    getJson('/kb/state').then(function (s) {
       if (s.ok === false && s.reason === 'disabled') {
         setPill('red', '已停用');
         showBanner('warn', 'TV 键盘已在 LocalSend 设置中停用');
@@ -319,6 +367,9 @@
   }
 
   if (host) document.getElementById('hostLine').textContent = host;
+  syncSnapshot().catch(function () {
+    showBanner('err', '暂时无法读取电视输入框，请先点击电视上的输入框');
+  });
   poll();
   setInterval(poll, 2000);
 })();

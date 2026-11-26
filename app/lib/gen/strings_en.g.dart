@@ -49,6 +49,7 @@ class Translations with BaseTranslations<AppLocale, Translations> {
   late final Translations$general$en general = Translations$general$en.internal(_root);
   late final Translations$receiveTab$en receiveTab = Translations$receiveTab$en.internal(_root);
   late final Translations$sendTab$en sendTab = Translations$sendTab$en.internal(_root);
+  late final Translations$tvKeyboardPage$en tvKeyboardPage = Translations$tvKeyboardPage$en.internal(_root);
   late final Translations$settingsTab$en settingsTab = Translations$settingsTab$en.internal(_root);
   late final Translations$troubleshootPage$en troubleshootPage = Translations$troubleshootPage$en.internal(_root);
   late final Translations$networkInterfacesPage$en networkInterfacesPage = Translations$networkInterfacesPage$en.internal(_root);
@@ -261,6 +262,120 @@ class Translations$sendTab$en {
 
   /// en: 'Place items to share.'
   String get placeItems => 'Place items to share.';
+
+  late final Translations$sendTab$tvKeyboard$en tvKeyboard = Translations$sendTab$tvKeyboard$en.internal(_root);
+}
+
+// Path: tvKeyboardPage
+class Translations$tvKeyboardPage$en {
+  Translations$tvKeyboardPage$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'TV keyboard'
+  String get title => 'TV keyboard';
+
+  /// en: 'Target device'
+  String get deviceLabel => 'Target device';
+
+  /// en: 'Connecting to {alias}…'
+  String statusConnecting({required Object alias}) => 'Connecting to ${alias}…';
+
+  /// en: 'Connected'
+  String get statusConnected => 'Connected';
+
+  /// en: 'Connection lost'
+  String get statusDisconnected => 'Connection lost';
+
+  /// en: 'This device has not enabled the TV keyboard'
+  String get notSupported => 'This device has not enabled the TV keyboard';
+
+  /// en: 'No nearby devices'
+  String get noDevices => 'No nearby devices';
+
+  /// en: 'Rescan'
+  String get rescan => 'Rescan';
+
+  /// en: 'Realtime'
+  String get modeRealtime => 'Realtime';
+
+  /// en: 'Draft'
+  String get modeDraft => 'Draft';
+
+  /// en: 'Sync'
+  String get syncNow => 'Sync';
+
+  /// en: 'Send entire draft'
+  String get draftSend => 'Send entire draft';
+
+  /// en: 'Send as message'
+  String get sendAsMessage => 'Send as message';
+
+  /// en: 'Help'
+  String get help => 'Help';
+
+  /// en: 'Realtime mode sends each edit to the TV. Draft mode lets you edit freely and replaces the TV text when you tap Send entire draft.'
+  String get helpBody =>
+      'Realtime mode sends each edit to the TV. Draft mode lets you edit freely and replaces the TV text when you tap Send entire draft.';
+
+  /// en: 'Each edit is sent to the TV immediately.'
+  String get realtimeHint => 'Each edit is sent to the TV immediately.';
+
+  /// en: 'Edit freely, then replace the TV text with the draft.'
+  String get draftHint => 'Edit freely, then replace the TV text with the draft.';
+
+  /// en: 'If the TV was changed with its remote, tap Sync.'
+  String get resyncHint => 'If the TV was changed with its remote, tap Sync.';
+
+  /// en: 'Backspace'
+  String get toolBackspace => 'Backspace';
+
+  /// en: 'Delete word'
+  String get toolDeleteWord => 'Delete word';
+
+  /// en: 'Delete forward'
+  String get toolDeleteForward => 'Delete forward';
+
+  /// en: 'Enter'
+  String get toolEnter => 'Enter';
+
+  /// en: 'Tab'
+  String get toolTab => 'Tab';
+
+  /// en: 'Left'
+  String get toolLeft => 'Left';
+
+  /// en: 'Right'
+  String get toolRight => 'Right';
+
+  /// en: 'Line start'
+  String get toolHome => 'Line start';
+
+  /// en: 'Line end'
+  String get toolEnd => 'Line end';
+
+  /// en: 'Select all'
+  String get toolSelectAll => 'Select all';
+
+  /// en: 'Copy'
+  String get toolCopy => 'Copy';
+
+  /// en: 'Cut'
+  String get toolCut => 'Cut';
+
+  /// en: 'Paste'
+  String get toolPaste => 'Paste';
+
+  /// en: 'TV clipboard'
+  String get toolTvClipboard => 'TV clipboard';
+
+  /// en: 'Enter the TV keyboard PIN'
+  String get pinRequired => 'Enter the TV keyboard PIN';
+
+  /// en: 'The PIN is incorrect'
+  String get pinFailed => 'The PIN is incorrect';
 }
 
 // Path: settingsTab
@@ -447,6 +562,9 @@ class Translations$receivePage$en {
 
   /// en: 'sent you a message:'
   String get subTitleMessage => 'sent you a message:';
+
+  /// en: 'Type into TV input'
+  String get injectToTv => 'Type into TV input';
 
   /// en: 'sent you a link:'
   String get subTitleLink => 'sent you a link:';
@@ -1047,6 +1165,33 @@ class Translations$sendTab$sendModes$en {
   String get link => 'Share via link';
 }
 
+// Path: sendTab.tvKeyboard
+class Translations$sendTab$tvKeyboard$en {
+  Translations$sendTab$tvKeyboard$en.internal(this._root);
+
+  final Translations _root; // ignore: unused_field
+
+  // Translations
+
+  /// en: 'TV keyboard'
+  String get title => 'TV keyboard';
+
+  /// en: 'Tap to find a TV and start typing'
+  String get subIdle => 'Tap to find a TV and start typing';
+
+  /// en: 'Looking for TVs…'
+  String get subScanning => 'Looking for TVs…';
+
+  /// en: 'Found: {alias} · Tap to start typing'
+  String subFound({required Object alias}) => 'Found: ${alias} · Tap to start typing';
+
+  /// en: 'No TV keyboard found'
+  String get subUnreachable => 'No TV keyboard found';
+
+  /// en: 'Retry'
+  String get retry => 'Retry';
+}
+
 // Path: settingsTab.general
 class Translations$settingsTab$general$en {
   Translations$settingsTab$general$en.internal(this._root);
@@ -1154,6 +1299,12 @@ class Translations$settingsTab$receive$en {
 
   /// en: 'Stay running in the background (TV)'
   String get keepAlive => 'Stay running in the background (TV)';
+
+  /// en: 'Enable TV keyboard'
+  String get tvKeyboard => 'Enable TV keyboard';
+
+  /// en: 'Use your phone as the keyboard for this TV'
+  String get tvKeyboardDescription => 'Use your phone as the keyboard for this TV';
 
   /// en: 'Open the installer after receiving an APK'
   String get autoInstallApk => 'Open the installer after receiving an APK';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/util/device_type_ext.dart';
 import 'package:localsend_app/widget/custom_progress_bar.dart';
 import 'package:localsend_app/widget/device_bage.dart';
@@ -17,6 +18,7 @@ class DeviceListTile extends StatelessWidget {
   final double? progress;
   final VoidCallback? onTap;
   final VoidCallback? onDetailsTap;
+  final VoidCallback? onKeyboardTap;
 
   const DeviceListTile({
     required this.device,
@@ -26,6 +28,7 @@ class DeviceListTile extends StatelessWidget {
     this.progress,
     this.onTap,
     this.onDetailsTap,
+    this.onKeyboardTap,
   });
 
   @override
@@ -43,10 +46,22 @@ class DeviceListTile extends StatelessWidget {
           ],
         ],
       ),
-      trailing: onDetailsTap != null
-          ? IconButton(
-              icon: const Icon(Icons.info_outline),
-              onPressed: onDetailsTap,
+      trailing: onDetailsTap != null || onKeyboardTap != null
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (onKeyboardTap != null)
+                  IconButton(
+                    icon: const Icon(Icons.keyboard_outlined),
+                    tooltip: t.sendTab.tvKeyboard.title,
+                    onPressed: onKeyboardTap,
+                  ),
+                if (onDetailsTap != null)
+                  IconButton(
+                    icon: const Icon(Icons.info_outline),
+                    onPressed: onDetailsTap,
+                  ),
+              ],
             )
           : null,
       subTitle: Wrap(

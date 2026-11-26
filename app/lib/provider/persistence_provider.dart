@@ -97,6 +97,7 @@ const _verifyChecksums = 'ls_verify_checksums';
 const _lsKeepAlive = 'ls_keep_alive';
 const _lsAutoInstallApk = 'ls_auto_install_apk';
 const _lsTvAutoAccept = 'ls_tv_auto_accept';
+const _lsTvKeyboard = 'ls_tv_keyboard';
 const _advancedSettingsKey = 'ls_advanced_settings';
 const _whatsNewKey = 'ls_whats_new';
 const _selectedTabKey = 'ls_selected_tab';
@@ -474,6 +475,14 @@ class PersistenceService {
 
   Future<void> setTvAutoAccept(bool v) async {
     await _prefs.setBool(_lsTvAutoAccept, v);
+  }
+
+  bool getTvKeyboard() {
+    return _prefs.getBool(_lsTvKeyboard) ?? true;
+  }
+
+  Future<void> setTvKeyboard(bool v) async {
+    await _prefs.setBool(_lsTvKeyboard, v);
   }
 
   bool getAdvancedSettingsEnabled() {

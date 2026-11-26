@@ -7,6 +7,7 @@ import 'package:localsend_app/model/send_mode.dart';
 import 'package:localsend_app/model/state/settings_state.dart';
 import 'package:localsend_app/provider/persistence_provider.dart';
 import 'package:localsend_app/provider/window_dimensions_provider.dart';
+import 'package:localsend_app/util/native/channel/android_channel.dart';
 import 'package:localsend_app/util/native/platform_check.dart';
 import 'package:localsend_isolates/isolate.dart';
 import 'package:localsend_isolates/model/device.dart';
@@ -82,6 +83,7 @@ class SettingsService extends PureNotifier<SettingsState> {
     autoInstallApk: _persistence.getAutoInstallApk(),
     keepAlive: _persistence.getKeepAlive(),
     tvAutoAccept: _persistence.getTvAutoAccept(),
+    tvKeyboard: _persistence.getTvKeyboard(),
   );
 
   Future<void> setAlias(String alias) async {
@@ -131,6 +133,16 @@ class SettingsService extends PureNotifier<SettingsState> {
     state = state.copyWith(
       tvAutoAccept: v,
     );
+  }
+
+  Future<void> setTvKeyboard(bool v) async {
+    await _persistence.setTvKeyboard(v);
+    state = state.copyWith(
+      tvKeyboard: v,
+    );
+    if (checkPlatform([TargetPlatform.android])) {
+      await refreshTvKeyboardAndroid();
+    }
   }
 
   Future<void> setAdvancedSettingsEnabled(bool isEnabled) async {

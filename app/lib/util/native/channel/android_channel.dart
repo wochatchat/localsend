@@ -95,6 +95,31 @@ Future<void> stopKeepAliveServiceAndroid() async {
   }
 }
 
+Future<void> refreshTvKeyboardAndroid() async {
+  try {
+    await _methodChannel.invokeMethod('refreshTvKeyboard');
+  } catch (e) {
+    _logger.warning('Could not refresh TV keyboard', e);
+  }
+}
+
+Future<bool> injectTextToTvAndroid(String text) async {
+  try {
+    return await _methodChannel.invokeMethod<bool>('imeInjectText', {'text': text}) ?? false;
+  } catch (e) {
+    _logger.warning('Could not inject text into TV input', e);
+    return false;
+  }
+}
+
+Future<void> trustTvKeyboardClientAndroid(String ip) async {
+  try {
+    await _methodChannel.invokeMethod('trustTvKeyboardClient', {'ip': ip});
+  } catch (e) {
+    _logger.warning('Could not trust TV keyboard client', e);
+  }
+}
+
 /// Native keep-alive diagnostics: which locks the foreground service currently
 /// holds (fgs = service running, multicast / wake / wifi = locks held).
 /// Used by the TV debug line on the receive page.

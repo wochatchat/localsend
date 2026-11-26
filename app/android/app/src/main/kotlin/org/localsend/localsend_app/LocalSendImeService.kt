@@ -1,7 +1,11 @@
 package org.localsend.localsend_app
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.Uri
 import android.graphics.Color
 import android.inputmethodservice.InputMethodService
 import android.os.Handler
@@ -51,6 +55,25 @@ class LocalSendImeService : InputMethodService() {
             EditorInfo.IME_ACTION_SEND,
             EditorInfo.IME_ACTION_NEXT
         )
+
+        @Volatile
+        private var activeService: LocalSendImeService? = null
+
+        fun injectText(text: String): Boolean {
+            val service = activeService
+            if (service != null) return service.injectOrQueue(text)
+            // The IME may not be bound yet. The text cannot be delivered until
+            // the service exists, so report failure instead of silently dropping it.
+            return false
+        }
+
+        fun refreshActiveService() {
+            activeService?.refreshKeyboardEnabled()
+        }
+
+        fun trustActiveClient(ip: String) {
+            activeService?.trustKeyboardClient(ip)
+        }
     }
 
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -58,8 +81,14 @@ class LocalSendImeService : InputMethodService() {
 
     // panel views (main thread only)
     private var qrView: ImageView? = null
+    private var urlView: TextView? = null
+    private var pinBadgeView: TextView? = null
     private var statusView: TextView? = null
     private var passwordWarning: TextView? = null
+
+    // A message may arrive while the IME has no focused editor. Keep one pending
+    // injection and flush it as soon as the next editor becomes active.
+    private var pendingInjection: String? = null
 
     // editor state, read from HTTP threads (volatile)
     @Volatile
@@ -75,19 +104,44 @@ class LocalSendImeService : InputMethodService() {
 
     override fun onCreate() {
         super.onCreate()
+        activeService = this
         startServerIfNeeded()
     }
 
     override fun onDestroy() {
         httpServer?.stop()
         httpServer = null
+        if (activeService === this) activeService = null
         super.onDestroy()
+    }
+
+    fun trustKeyboardClient(ip: String) {
+        httpServer?.trustClient(ip)
+    }
+
+    fun refreshKeyboardEnabled() {
+        if (isKeyboardEnabled()) {
+            startServerIfNeeded()
+            val pin = readPin()
+            pinBadgeView?.visibility = if (pin != null) View.VISIBLE else View.GONE
+            val url = buildKeyboardUrl(pin)
+            urlView?.text = url
+            renderQr(url)
+            qrView?.visibility = View.VISIBLE
+            statusView?.setText(R.string.ime_status_waiting)
+        } else {
+            httpServer?.stop()
+            httpServer = null
+            qrView?.visibility = View.GONE
+            statusView?.setText(R.string.ime_status_disabled)
+        }
     }
 
     // region settings
 
     fun isKeyboardEnabled(): Boolean =
-        getSharedPreferences(PREF_NAME, MODE_PRIVATE).getBoolean(PREF_KEY_ENABLED, true)
+        packageManager.hasSystemFeature(PackageManager.FEATURE_LEANBACK) &&
+            getSharedPreferences(PREF_NAME, MODE_PRIVATE).getBoolean(PREF_KEY_ENABLED, true)
 
     fun readPin(): String? =
         getSharedPreferences(PREF_NAME, MODE_PRIVATE)
@@ -108,6 +162,18 @@ class LocalSendImeService : InputMethodService() {
         }
     }
 
+    private fun injectOrQueue(text: String): Boolean {
+        if (text.isEmpty()) return false
+        val applied = applyInsert(text)
+        if (!applied) pendingInjection = text
+        return true
+    }
+
+    private fun flushPendingInjection() {
+        val text = pendingInjection ?: return
+        if (applyInsert(text)) pendingInjection = null
+    }
+
     // endregion
 
     // region panel
@@ -115,19 +181,20 @@ class LocalSendImeService : InputMethodService() {
     override fun onCreateInputView(): View {
         val view = LayoutInflater.from(this).inflate(R.layout.ime_panel, null)
         qrView = view.findViewById(R.id.ime_qr)
+        urlView = view.findViewById(R.id.ime_url)
+        pinBadgeView = view.findViewById(R.id.ime_pin_badge)
         statusView = view.findViewById(R.id.ime_status)
         passwordWarning = view.findViewById(R.id.ime_password_warning)
 
         val enabled = isKeyboardEnabled()
         val pin = readPin()
-        val pinBadge = view.findViewById<TextView>(R.id.ime_pin_badge)
-        pinBadge.visibility = if (pin != null) View.VISIBLE else View.GONE
+        pinBadgeView?.visibility = if (pin != null) View.VISIBLE else View.GONE
         if (!enabled) {
             qrView?.visibility = View.GONE
             statusView?.text = getString(R.string.ime_status_disabled)
         } else {
             val url = buildKeyboardUrl(pin)
-            view.findViewById<TextView>(R.id.ime_url).text = url
+            urlView?.text = url
             renderQr(url)
         }
 
@@ -153,6 +220,7 @@ class LocalSendImeService : InputMethodService() {
         super.onStartInputView(editorInfo, restarting)
         editorVisible = true
         applyEditorInfo(editorInfo)
+        flushPendingInjection()
     }
 
     override fun onFinishInputView(finishingInput: Boolean) {
@@ -163,6 +231,7 @@ class LocalSendImeService : InputMethodService() {
     override fun onStartInput(attribute: EditorInfo?, restarting: Boolean) {
         super.onStartInput(attribute, restarting)
         applyEditorInfo(attribute)
+        if (editorVisible) flushPendingInjection()
     }
 
     private fun applyEditorInfo(editorInfo: EditorInfo?) {
@@ -190,7 +259,7 @@ class LocalSendImeService : InputMethodService() {
 
     private fun buildKeyboardUrl(pin: String?): String {
         val base = "http://${findLanIp() ?: "0.0.0.0"}:$KEYBOARD_PORT/kb"
-        return if (pin != null) "$base?pin=$pin" else base
+        return if (pin != null) "$base?pin=${Uri.encode(pin)}" else base
     }
 
     private fun renderQr(content: String) {
@@ -286,7 +355,11 @@ class LocalSendImeService : InputMethodService() {
         }
         if (extracted?.text != null) {
             val len = extracted.text.length
-            ic.setSelection(a.coerceIn(0, len), b.coerceIn(0, len))
+            val start = extracted.startOffset
+            ic.setSelection(
+                (a + start).coerceIn(start, start + len),
+                (b + start).coerceIn(start, start + len),
+            )
         } else {
             // editor does not expose full text; best effort
             ic.setSelection(a, b)
@@ -294,16 +367,32 @@ class LocalSendImeService : InputMethodService() {
         true
     } ?: false
 
-    fun applyReplaceAll(text: String): Boolean = callOnMainThread {
-        val ic = currentInputConnection ?: return@callOnMainThread false
-        ic.finishComposingText()
+    fun readSnapshot(): Map<String, Any?>? = callOnMainThread {
+        val ic = currentInputConnection ?: return@callOnMainThread null
         val extracted = try {
             ic.getExtractedText(ExtractedTextRequest(), 0)
         } catch (e: Exception) {
             null
-        }
-        if (extracted?.text != null && extracted.text.isNotEmpty()) {
-            ic.setSelection(0, extracted.text.length)
+        } ?: return@callOnMainThread null
+        val text = extracted.text?.toString() ?: return@callOnMainThread null
+        mapOf(
+            "text" to text,
+            "startOffset" to extracted.startOffset,
+            // ExtractedText selection offsets are relative to its text window;
+            // expose absolute editor offsets to keep the HTTP API unambiguous.
+            "selectionStart" to extracted.startOffset + extracted.selectionStart,
+            "selectionEnd" to extracted.startOffset + extracted.selectionEnd,
+        )
+    }
+
+    fun applyReplaceAll(text: String): Boolean = callOnMainThread {
+        val ic = currentInputConnection ?: return@callOnMainThread false
+        ic.finishComposingText()
+        // Context-menu selectAll covers the whole editor even when extracted text
+        // is only a window around the cursor. Some custom editors do not support
+        // it, so retain the bounded delete fallback for those controls.
+        val selected = ic.performContextMenuAction(android.R.id.selectAll)
+        if (selected) {
             ic.commitText(text, 1)
         } else {
             ic.deleteSurroundingText(EXTRACT_ALL_LIMIT, EXTRACT_ALL_LIMIT)
@@ -324,7 +413,9 @@ class LocalSendImeService : InputMethodService() {
         }
         if (extracted != null) {
             val len = extracted.text?.length ?: 0
-            val target = (extracted.selectionEnd + steps).coerceIn(0, len)
+            val start = extracted.startOffset
+            val cursor = start + extracted.selectionEnd
+            val target = (cursor + steps).coerceIn(start, start + len)
             ic.setSelection(target, target)
         } else {
             // fall back to key events, e.g. custom editors without text extraction
@@ -355,6 +446,48 @@ class LocalSendImeService : InputMethodService() {
         true
     } ?: false
 
+    fun applyDeleteWord(): Boolean = callOnMainThread {
+        val ic = currentInputConnection ?: return@callOnMainThread false
+        val before = ic.getTextBeforeCursor(EXTRACT_WORD_LIMIT, 0)?.toString() ?: return@callOnMainThread false
+        var count = 0
+        for (char in before.reversed()) {
+            if (count > 0 && char.isWhitespace()) break
+            count += 1
+        }
+        if (count > 0) ic.deleteSurroundingText(count, 0)
+        true
+    } ?: false
+
+    fun applyMoveToLineBoundary(end: Boolean): Boolean = callOnMainThread {
+        val ic = currentInputConnection ?: return@callOnMainThread false
+        val extracted = try { ic.getExtractedText(ExtractedTextRequest(), 0) } catch (e: Exception) { null }
+        val text = extracted?.text?.toString()
+        if (text != null) {
+            val cursor = extracted.selectionEnd.coerceIn(0, text.length)
+            val lineStart = text.lastIndexOf('\n', (cursor - 1).coerceAtLeast(0)).let { if (it < 0) 0 else it + 1 }
+            val lineEnd = text.indexOf('\n', cursor).let { if (it < 0) text.length else it }
+            val target = if (end) lineEnd else lineStart
+            ic.setSelection(extracted.startOffset + target, extracted.startOffset + target)
+        } else {
+            val key = if (end) android.view.KeyEvent.KEYCODE_MOVE_END else android.view.KeyEvent.KEYCODE_MOVE_HOME
+            ic.sendKeyEvent(android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN, key))
+            ic.sendKeyEvent(android.view.KeyEvent(android.view.KeyEvent.ACTION_UP, key))
+        }
+        true
+    } ?: false
+
+    fun readClipboard(): String? = callOnMainThread {
+        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        if (!clipboard.hasPrimaryClip()) return@callOnMainThread null
+        clipboard.primaryClip?.getItemAt(0)?.coerceToText(this)?.toString()
+    }
+
+    fun writeClipboard(text: String): Boolean = callOnMainThread {
+        val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText("LocalSend", text))
+        true
+    } ?: false
+
     fun applyContextMenuAction(action: String): Boolean = callOnMainThread {
         val ic = currentInputConnection ?: return@callOnMainThread false
         val id = when (action) {
@@ -372,3 +505,4 @@ class LocalSendImeService : InputMethodService() {
 
 private const val NanoHTTPD_SOCKET_READ_TIMEOUT = 5000 // ms, matches NanoHTTPD default
 private const val EXTRACT_ALL_LIMIT = 100000
+private const val EXTRACT_WORD_LIMIT = 1000

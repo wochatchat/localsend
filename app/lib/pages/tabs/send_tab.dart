@@ -5,6 +5,7 @@ import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/model/send_mode.dart';
 import 'package:localsend_app/pages/device_details_page.dart';
 import 'package:localsend_app/pages/selected_files_page.dart';
+import 'package:localsend_app/pages/tv_keyboard_page.dart';
 import 'package:localsend_app/pages/tabs/send_tab_vm.dart';
 import 'package:localsend_app/pages/troubleshoot_page.dart';
 import 'package:localsend_app/provider/animation_provider.dart';
@@ -14,6 +15,7 @@ import 'package:localsend_app/provider/network/scan_facade.dart';
 import 'package:localsend_app/provider/network/send_provider.dart';
 import 'package:localsend_app/provider/selection/selected_sending_files_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/provider/tv_provider.dart';
 import 'package:localsend_app/util/favorites.dart';
 import 'package:localsend_app/util/native/file_picker.dart';
 import 'package:localsend_app/util/native/platform_check.dart';
@@ -167,6 +169,13 @@ class SendTab extends StatelessWidget {
                 ),
               ),
             ],
+            if (checkPlatform([TargetPlatform.android]) && !ref.read(tvProvider))
+              Padding(
+                padding: const EdgeInsets.only(left: _horizontalPadding, right: _horizontalPadding, bottom: 10),
+                child: _TvKeyboardEntry(
+                  onTap: () async => context.push(() => const TvKeyboardPage()),
+                ),
+              ),
             Row(
               children: [
                 const SizedBox(width: _horizontalPadding),
@@ -225,6 +234,9 @@ class SendTab extends StatelessWidget {
                           isFavorite: favoriteEntry != null,
                           nameOverride: favoriteEntry?.alias,
                           onDetailsTap: () async => await context.push(() => DeviceDetailsPage(device: device)),
+                          onKeyboardTap: checkPlatform([TargetPlatform.android]) && !ref.read(tvProvider)
+                              ? () async => await context.push(() => TvKeyboardPage(initialDevice: device))
+                              : null,
                           onTap: () async => await vm.onTapDevice(context, device),
                         ),
                 ),
@@ -555,6 +567,9 @@ class _MultiSendDeviceListTile extends StatelessWidget {
       isFavorite: isFavorite,
       nameOverride: nameOverride,
       onDetailsTap: () async => await context.push(() => DeviceDetailsPage(device: device)),
+      onKeyboardTap: checkPlatform([TargetPlatform.android]) && !context.ref.read(tvProvider)
+          ? () async => await context.push(() => TvKeyboardPage(initialDevice: device))
+          : null,
       onTap: () async => await vm.onTapDeviceMultiSend(context, device),
     );
   }
@@ -582,5 +597,52 @@ extension on SessionStatus {
       case SessionStatus.canceledByReceiver:
         return t.progressPage.total.title.canceledReceiver;
     }
+  }
+}
+
+
+class _TvKeyboardEntry extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _TvKeyboardEntry({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Card(
+      margin: EdgeInsets.zero,
+      color: colors.surfaceContainerLow,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Row(
+            children: [
+              Icon(Icons.keyboard, size: 46, color: colors.primary),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(t.sendTab.tvKeyboard.title, style: const TextStyle(fontSize: 20)),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        Icon(Icons.circle, size: 10, color: colors.onSurfaceVariant),
+                        const SizedBox(width: 6),
+                        Expanded(child: Text(t.sendTab.tvKeyboard.subIdle, style: TextStyle(fontSize: 13, color: colors.onSurfaceVariant))),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

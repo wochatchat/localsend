@@ -43,6 +43,7 @@ class SettingsState with SettingsStateMappable {
   final bool autoInstallApk; // Android: pull up the installer after an APK finished receiving
   final bool keepAlive; // Android: keep-alive foreground service + start on boot
   final bool tvAutoAccept; // Android TV: accept incoming requests without confirmation
+  final bool tvKeyboard; // Android TV: expose the LocalSend input method and LAN keyboard
 
   const SettingsState({
     required this.showToken,
@@ -79,5 +80,6 @@ class SettingsState with SettingsStateMappable {
     required this.autoInstallApk,
     required this.keepAlive,
     required this.tvAutoAccept,
+    required this.tvKeyboard,
   });
 }

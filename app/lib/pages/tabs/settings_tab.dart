@@ -312,6 +312,14 @@ class SettingsTab extends StatelessWidget {
                       }
                     },
                   ),
+                  _BooleanEntry(
+                    label: t.settingsTab.receive.tvKeyboard,
+                    description: t.settingsTab.receive.tvKeyboardDescription,
+                    value: vm.settings.tvKeyboard,
+                    onChanged: (b) async {
+                      await ref.notifier(settingsProvider).setTvKeyboard(b);
+                    },
+                  ),
                 ],
                 if (checkPlatform([TargetPlatform.android]))
                   _BooleanEntry(

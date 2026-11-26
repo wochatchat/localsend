@@ -11,8 +11,10 @@ import 'package:localsend_app/pages/web_share_page.dart';
 import 'package:localsend_app/provider/favorites_provider.dart';
 import 'package:localsend_app/provider/selection/selected_receiving_files_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
+import 'package:localsend_app/provider/tv_provider.dart';
 import 'package:localsend_app/util/device_type_ext.dart';
 import 'package:localsend_app/util/favorites.dart';
+import 'package:localsend_app/util/native/channel/android_channel.dart';
 import 'package:localsend_app/util/native/platform_check.dart';
 import 'package:localsend_app/util/native/taskbar_helper.dart';
 import 'package:localsend_app/util/ui/snackbar.dart';
@@ -224,6 +226,21 @@ class _ReceivePageState extends State<ReceivePage> with Refena {
                                                     ),
                                                     icon: Icon(Icons.verified_user),
                                                     label: Text(t.verifyPage.title),
+                                                  ),
+                                                if (checkPlatform([TargetPlatform.android]) && ref.read(tvProvider))
+                                                  ElevatedButton.icon(
+                                                    onPressed: () async {
+                                                      final injected = await injectTextToTvAndroid(vm.message!);
+                                                      if (context.mounted && !injected) {
+                                                        context.showSnackBar(t.general.error);
+                                                      }
+                                                      if (injected && context.mounted) {
+                                                        vm.onAccept();
+                                                        context.global.dispatch(NavigateAction.popUntil<WebSharePage>());
+                                                      }
+                                                    },
+                                                    icon: const Icon(Icons.keyboard),
+                                                    label: Text(t.receivePage.injectToTv),
                                                   ),
                                                 ElevatedButton.icon(
                                                   onPressed: () {

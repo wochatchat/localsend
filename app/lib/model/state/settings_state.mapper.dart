@@ -189,6 +189,11 @@ class SettingsStateMapper extends ClassMapperBase<SettingsState> {
     'tvAutoAccept',
     _$tvAutoAccept,
   );
+  static bool _$tvKeyboard(SettingsState v) => v.tvKeyboard;
+  static const Field<SettingsState, bool> _f$tvKeyboard = Field(
+    'tvKeyboard',
+    _$tvKeyboard,
+  );
 
   @override
   final MappableFields<SettingsState> fields = const {
@@ -226,6 +231,7 @@ class SettingsStateMapper extends ClassMapperBase<SettingsState> {
     #autoInstallApk: _f$autoInstallApk,
     #keepAlive: _f$keepAlive,
     #tvAutoAccept: _f$tvAutoAccept,
+    #tvKeyboard: _f$tvKeyboard,
   };
 
   static SettingsState _instantiate(DecodingData data) {
@@ -264,6 +270,7 @@ class SettingsStateMapper extends ClassMapperBase<SettingsState> {
       autoInstallApk: data.dec(_f$autoInstallApk),
       keepAlive: data.dec(_f$keepAlive),
       tvAutoAccept: data.dec(_f$tvAutoAccept),
+      tvKeyboard: data.dec(_f$tvKeyboard),
     );
   }
 
@@ -368,6 +375,7 @@ abstract class SettingsStateCopyWith<$R, $In extends SettingsState, $Out>
     bool? autoInstallApk,
     bool? keepAlive,
     bool? tvAutoAccept,
+    bool? tvKeyboard,
   });
   SettingsStateCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
@@ -434,6 +442,7 @@ class _SettingsStateCopyWithImpl<$R, $Out>
     bool? autoInstallApk,
     bool? keepAlive,
     bool? tvAutoAccept,
+    bool? tvKeyboard,
   }) => $apply(
     FieldCopyWithData({
       if (showToken != null) #showToken: showToken,
@@ -474,6 +483,7 @@ class _SettingsStateCopyWithImpl<$R, $Out>
       if (autoInstallApk != null) #autoInstallApk: autoInstallApk,
       if (keepAlive != null) #keepAlive: keepAlive,
       if (tvAutoAccept != null) #tvAutoAccept: tvAutoAccept,
+      if (tvKeyboard != null) #tvKeyboard: tvKeyboard,
     }),
   );
   @override
@@ -524,6 +534,7 @@ class _SettingsStateCopyWithImpl<$R, $Out>
     autoInstallApk: data.get(#autoInstallApk, or: $value.autoInstallApk),
     keepAlive: data.get(#keepAlive, or: $value.keepAlive),
     tvAutoAccept: data.get(#tvAutoAccept, or: $value.tvAutoAccept),
+    tvKeyboard: data.get(#tvKeyboard, or: $value.tvKeyboard),
   );
 
   @override

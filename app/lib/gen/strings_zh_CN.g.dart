@@ -48,6 +48,8 @@ class TranslationsZhCn extends Translations with BaseTranslations<AppLocale, Tra
   @override
   late final Translations$sendTab$zh_CN sendTab = Translations$sendTab$zh_CN.internal(_root);
   @override
+  late final Translations$tvKeyboardPage$zh_CN tvKeyboardPage = Translations$tvKeyboardPage$zh_CN.internal(_root);
+  @override
   late final Translations$settingsTab$zh_CN settingsTab = Translations$settingsTab$zh_CN.internal(_root);
   @override
   late final Translations$troubleshootPage$zh_CN troubleshootPage = Translations$troubleshootPage$zh_CN.internal(_root);
@@ -234,6 +236,85 @@ class Translations$sendTab$zh_CN extends Translations$sendTab$en {
   String get help => '请确保目标连接到同一个 Wi‑Fi 网络。';
   @override
   String get placeItems => '列出要分享的项目。';
+  @override
+  late final Translations$sendTab$tvKeyboard$zh_CN tvKeyboard = Translations$sendTab$tvKeyboard$zh_CN.internal(_root);
+}
+
+// Path: tvKeyboardPage
+class Translations$tvKeyboardPage$zh_CN extends Translations$tvKeyboardPage$en {
+  Translations$tvKeyboardPage$zh_CN.internal(TranslationsZhCn root) : this._root = root, super.internal(root);
+
+  final TranslationsZhCn _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => '电视键盘';
+  @override
+  String get deviceLabel => '目标设备';
+  @override
+  String statusConnecting({required Object alias}) => '正在连接 ${alias}…';
+  @override
+  String get statusConnected => '已连接';
+  @override
+  String get statusDisconnected => '连接已断开';
+  @override
+  String get notSupported => '该设备未开启电视键盘';
+  @override
+  String get noDevices => '未发现附近设备';
+  @override
+  String get rescan => '重新扫描';
+  @override
+  String get modeRealtime => '实时输入';
+  @override
+  String get modeDraft => '草稿模式';
+  @override
+  String get syncNow => '同步';
+  @override
+  String get draftSend => '整段上屏';
+  @override
+  String get sendAsMessage => '以消息发送';
+  @override
+  String get help => '帮助';
+  @override
+  String get helpBody => '实时模式会把每次编辑立即发送到电视。草稿模式可以自由编辑，点击“整段上屏”后替换电视文本。';
+  @override
+  String get realtimeHint => '每次编辑都会立即发送到电视。';
+  @override
+  String get draftHint => '自由编辑，然后用草稿替换电视文本。';
+  @override
+  String get resyncHint => '如果电视遥控器改过内容，请点击同步。';
+  @override
+  String get toolBackspace => '退格';
+  @override
+  String get toolDeleteWord => '删词';
+  @override
+  String get toolDeleteForward => '删右侧';
+  @override
+  String get toolEnter => 'Enter';
+  @override
+  String get toolTab => 'Tab';
+  @override
+  String get toolLeft => '左移';
+  @override
+  String get toolRight => '右移';
+  @override
+  String get toolHome => '行首';
+  @override
+  String get toolEnd => '行尾';
+  @override
+  String get toolSelectAll => '全选';
+  @override
+  String get toolCopy => '复制';
+  @override
+  String get toolCut => '剪切';
+  @override
+  String get toolPaste => '粘贴';
+  @override
+  String get toolTvClipboard => '电视剪贴板';
+  @override
+  String get pinRequired => '输入电视键盘 PIN';
+  @override
+  String get pinFailed => 'PIN 不正确';
 }
 
 // Path: settingsTab
@@ -398,6 +479,8 @@ class Translations$receivePage$zh_CN extends Translations$receivePage$en {
       (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('zh'))(n, one: '想要发送给你一个文件', other: '想要发送给你 ${n} 个文件');
   @override
   String get subTitleMessage => '发送给你了一条消息：';
+  @override
+  String get injectToTv => '注入电视输入框';
   @override
   String get subTitleLink => '发送给你了一个链接：';
   @override
@@ -919,6 +1002,27 @@ class Translations$sendTab$sendModes$zh_CN extends Translations$sendTab$sendMode
   String get link => '通过链接分享';
 }
 
+// Path: sendTab.tvKeyboard
+class Translations$sendTab$tvKeyboard$zh_CN extends Translations$sendTab$tvKeyboard$en {
+  Translations$sendTab$tvKeyboard$zh_CN.internal(TranslationsZhCn root) : this._root = root, super.internal(root);
+
+  final TranslationsZhCn _root; // ignore: unused_field
+
+  // Translations
+  @override
+  String get title => '电视键盘';
+  @override
+  String get subIdle => '点击查找电视并开始打字';
+  @override
+  String get subScanning => '正在查找电视…';
+  @override
+  String subFound({required Object alias}) => '已发现：${alias} · 点击开始打字';
+  @override
+  String get subUnreachable => '未发现电视键盘';
+  @override
+  String get retry => '重试';
+}
+
 // Path: settingsTab.general
 class Translations$settingsTab$general$zh_CN extends Translations$settingsTab$general$en {
   Translations$settingsTab$general$zh_CN.internal(TranslationsZhCn root) : this._root = root, super.internal(root);
@@ -998,6 +1102,10 @@ class Translations$settingsTab$receive$zh_CN extends Translations$settingsTab$re
   String get tvAutoAccept => '自动接收新请求（电视端）';
   @override
   String get keepAlive => '后台保活运行（电视端）';
+  @override
+  String get tvKeyboard => '启用电视键盘';
+  @override
+  String get tvKeyboardDescription => '用手机作为这台电视的键盘';
   @override
   String get autoInstallApk => '收到 APK 后自动拉起安装';
   @override

@@ -179,6 +179,30 @@ class MainActivity : FlutterActivity() {
                     result.success(null)
                 }
 
+                "refreshTvKeyboard" -> {
+                    LocalSendImeService.refreshActiveService()
+                    result.success(null)
+                }
+
+                "imeInjectText" -> {
+                    val text = call.argument<String>("text")
+                    if (text.isNullOrEmpty()) {
+                        result.success(false)
+                    } else {
+                        result.success(LocalSendImeService.injectText(text))
+                    }
+                }
+
+                "trustTvKeyboardClient" -> {
+                    val ip = call.argument<String>("ip")
+                    if (ip.isNullOrBlank()) {
+                        result.error("INVALID_ARGUMENT", "Missing client IP", null)
+                    } else {
+                        LocalSendImeService.trustActiveClient(ip)
+                        result.success(null)
+                    }
+                }
+
                 "keepAliveStatus" -> {
                     result.success(
                         mapOf(

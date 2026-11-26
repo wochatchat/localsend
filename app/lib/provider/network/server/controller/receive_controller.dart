@@ -65,6 +65,9 @@ class ReceiveController {
     // Feed the device into the discovery store; it comes back (and is
     // registered) via the [StartDiscoveryListener] stream.
     server.ref.redux(parentIsolateProvider).dispatch(IsolateDiscoveryObserveInboundAction(device: event.info.toDevice(event.ip, withChannel: true)));
+    if (server.ref.read(tvProvider) && server.ref.read(settingsProvider).tvKeyboard) {
+      await trustTvKeyboardClientAndroid(event.ip);
+    }
     server.ref.notifier(discoveryLoggerProvider).addLog('[DISCOVER/TCP] Received "/register" HTTP request: ${event.info.alias} (${event.ip})');
   }
 

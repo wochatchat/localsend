@@ -9,10 +9,14 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * - GET  /kb          -> single-page keyboard (assets/kb.html)
  * - GET  /kb/state    -> editor/connection state for the client
+ * - GET  /kb/snapshot -> extracted text and selection snapshot
  * - POST /kb/text     -> {op:"ins"|"del"|"sel"|"relmove"|"replace"|"key", ...}
- * - POST /kb/action   -> {action:"enter"|"tab"|"selectAll"|"cut"|"copy"|"paste"}
+ * - POST /kb/action   -> {action:"enter"|"tab"|"selectAll"|"cut"|"copy"|"paste"|"deleteWord"|"home"|"end"}
+ * - GET/POST /kb/clipboard -> TV clipboard read/write
  *
- * Auth: if the receive PIN is configured, requests must pass `pin` (query param).
+ * Auth: if the receive PIN is configured, requests must pass `pin` (query param),
+ * unless the source IP was just observed through LocalSend's authenticated
+ * `/register` event.
  * Writes are rate limited per client IP.
  */
 class KeyboardHttpServer(
@@ -27,6 +31,12 @@ class KeyboardHttpServer(
     }
 
     private val clients = ConcurrentHashMap<String, Long>()
+    private val trustedClients = ConcurrentHashMap<String, Long>()
+
+    fun trustClient(ip: String) {
+        trustedClients[ip] = System.currentTimeMillis() + CLIENT_TTL_MS
+    }
+
     private val writeTimestamps = ConcurrentHashMap<String, ArrayDeque<Long>>()
 
     override fun serve(session: IHTTPSession): Response {
@@ -41,6 +51,16 @@ class KeyboardHttpServer(
                     if (!checkRateLimit(ip)) return rateLimited()
                     if (!checkPin(session)) return unauthorized()
                     serveState()
+                }
+                path == "/kb/snapshot" -> {
+                    if (!checkRateLimit(ip)) return rateLimited()
+                    if (!checkPin(session)) return unauthorized()
+                    serveSnapshot()
+                }
+                path == "/kb/clipboard" -> {
+                    if (!checkRateLimit(ip)) return rateLimited()
+                    if (!checkPin(session)) return unauthorized()
+                    serveClipboard(session)
                 }
                 path == "/kb/text" -> {
                     if (!checkRateLimit(ip)) return rateLimited()
@@ -81,6 +101,33 @@ class KeyboardHttpServer(
         return json(Response.Status.OK, body)
     }
 
+    private fun serveSnapshot(): Response {
+        val snapshot = ime.readSnapshot()
+            ?: return json(Response.Status.OK, JSONObject().put("ok", false).put("error", "snapshot_unavailable"))
+        val body = JSONObject().put("ok", true)
+        snapshot.forEach { (key, value) -> body.put(key, value) }
+        return json(Response.Status.OK, body)
+    }
+
+    private fun serveClipboard(session: IHTTPSession): Response {
+        return when (session.method) {
+            Method.GET -> json(
+                Response.Status.OK,
+                JSONObject().put("ok", true).put("text", ime.readClipboard())
+            )
+            Method.POST -> {
+                val payload = readJsonBody(session) ?: return badRequest("invalid json")
+                val text = payload.optString("text")
+                if (text.length > MAX_TEXT_LENGTH) return badRequest("invalid text")
+                json(Response.Status.OK, JSONObject().put("ok", ime.writeClipboard(text)))
+            }
+            else -> json(
+                Response.Status.lookup(405) ?: Response.Status.BAD_REQUEST,
+                JSONObject().put("ok", false).put("error", "method_not_allowed"),
+            )
+        }
+    }
+
     private fun serveText(session: IHTTPSession): Response {
         val payload = readJsonBody(session) ?: return badRequest("invalid json")
         val op = payload.optString("op")
@@ -105,6 +152,9 @@ class KeyboardHttpServer(
             "key" -> when (payload.optString("code")) {
                 "enter" -> ime.applyEnter()
                 "tab" -> ime.applyTab()
+                "deleteWord" -> ime.applyDeleteWord()
+                "home" -> ime.applyMoveToLineBoundary(false)
+                "end" -> ime.applyMoveToLineBoundary(true)
                 else -> return badRequest("unknown key")
             }
             else -> return badRequest("unknown op")
@@ -121,6 +171,9 @@ class KeyboardHttpServer(
         val applied = when (action) {
             "enter" -> ime.applyEnter()
             "tab" -> ime.applyTab()
+            "deleteWord" -> ime.applyDeleteWord()
+            "home" -> ime.applyMoveToLineBoundary(false)
+            "end" -> ime.applyMoveToLineBoundary(true)
             "selectAll", "cut", "copy", "paste" -> ime.applyContextMenuAction(action)
             else -> return badRequest("unknown action")
         }
@@ -143,6 +196,11 @@ class KeyboardHttpServer(
 
     private fun checkPin(session: IHTTPSession): Boolean {
         val pin = ime.readPin() ?: return true // no PIN configured
+        val now = System.currentTimeMillis()
+        val clientIp = session.remoteIpAddress ?: return false
+        val trustedUntil = trustedClients[clientIp]
+        if (trustedUntil != null && trustedUntil > now) return true
+        if (trustedUntil != null) trustedClients.remove(clientIp)
         val provided = session.parms["pin"] ?: return false
         return provided == pin
     }
@@ -175,6 +233,10 @@ class KeyboardHttpServer(
             if (now - seen > CLIENT_TTL_MS) {
                 it.remove()
             }
+        }
+        val trustedIt = trustedClients.entries.iterator()
+        while (trustedIt.hasNext()) {
+            if (trustedIt.next().value <= now) trustedIt.remove()
         }
         clients[ip] = now
     }
